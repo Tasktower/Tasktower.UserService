@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasktower.UserService", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasktower.UserService.Tests", "test\Tasktower.UserService.Tests\Tasktower.UserService.Tests.csproj", "{8F1ACFA9-0BB5-4BF7-8558-202693CE52CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE7498E3-ABF2-495B-9E1B-EFD33604FEF6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A42683D-BF8D-4815-83BB-F0880D2080F0}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
