@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Tasktower.UserService.Domain;
 
-namespace Tasktower.UserService.DataAccess.DataStoreAccess
+namespace Tasktower.UserService.DataAccess.DataStoreAccessors
 {
     public class EFDBContext : DbContext
     {

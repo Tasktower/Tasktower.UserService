@@ -9,7 +9,7 @@ using Tasktower.UserService.Domain;
 
 namespace Tasktower.UserService.Controllers
 {
-    
+
 
     [Route("api/[controller]")]
     [ApiController]

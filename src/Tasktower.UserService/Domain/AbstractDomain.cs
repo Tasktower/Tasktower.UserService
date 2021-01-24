@@ -9,11 +9,11 @@ namespace Tasktower.UserService.Domain
     public abstract class AbstractDomain
     {
         [Column("id")]
-        public virtual Guid Id { get; set; }
+        public Guid Id { get; set; }
         [Column("created_at")]
-        public virtual DateTime CreatedAt {get; set;}
+        public DateTime CreatedAt { get; set; }
         [Column("updated_at")]
-        public virtual DateTime UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
     }
 }

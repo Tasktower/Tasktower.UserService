@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Tasktower.UserService.DataAccess.DataStoreAccess;
+using Tasktower.UserService.DataAccess.DataStoreAccessors;
 using Tasktower.UserService.DataAccess.Repository;
 
 namespace Tasktower.UserService.DataAccess

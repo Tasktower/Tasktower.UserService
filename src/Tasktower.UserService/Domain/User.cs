@@ -32,6 +32,6 @@ namespace Tasktower.UserService.Domain
         public static string[] RolesToRolesList(string roles)
         {
             return roles.Split(",");
-        }   
+        }
     }
 }

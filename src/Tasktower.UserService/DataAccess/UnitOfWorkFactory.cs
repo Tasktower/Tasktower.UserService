@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Tasktower.UserService.DataAccess.DataStoreAccess;
+using Tasktower.UserService.DataAccess.DataStoreAccessors;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tasktower.UserService.DataAccess

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Tasktower.UserService.DataAccess.DataStoreAccess;
+using Tasktower.UserService.DataAccess.DataStoreAccessors;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {

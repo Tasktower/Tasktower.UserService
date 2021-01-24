@@ -29,7 +29,11 @@ namespace Tasktower.UserService
             // Data access services
             services.AddScoped<DataAccess.IUnitOfWorkFactory, DataAccess.UnitOfWorkFactory>();
 
+            // Business Logic Layers
+            services.AddScoped<BLL.ICryptoBLL, BLL.CryptoBLL>();
+
             // Routing services
+            services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -40,6 +44,8 @@ namespace Tasktower.UserService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
