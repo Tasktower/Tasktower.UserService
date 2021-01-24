@@ -1,4 +1,5 @@
 ﻿using NHibernate;
+using NHibernate.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,46 +24,50 @@ namespace Tasktower.UserService.DataAccess.Repository
             _session = null;
         }
 
-        public void Add(TDomain item)
+        public async Task Add(TDomain item)
         {
-            _session.Save(item);
+           await _session.SaveAsync(item);
         }
 
-        public void AddRange(IEnumerable<TDomain> items)
+        public async Task AddRange(IEnumerable<TDomain> items)
         {
+            IList<Task> tasks = new List<Task>(items.Count() + 1);
             foreach(TDomain item in items)
             {
-                _session.Save(item);
+                tasks.Append(_session.Save(item));
             }
+            await Task.WhenAll(tasks);
         }
 
-        public IEnumerable<TDomain> GetAll()
+        public async Task<List<TDomain>> GetAll()
         {
-            return _session.Query<TDomain>().ToList();
+            return await _session.Query<TDomain>().ToListAsync();
         }
 
-        public TDomain GetById(object Id)
+        public async Task<TDomain> GetById(object Id)
         {
-            return _session.Load<TDomain>(Id);
+            return await _session.LoadAsync<TDomain>(Id);
         }
 
-        public void Remove(TDomain item)
+        public async Task Remove(TDomain item)
         {
-            _session.Delete(item);
+            await _session.DeleteAsync(item);
         }
 
-        public void RemoveById(object id)
+        public  async Task RemoveById(object id)
         {
-            var item = _session.Load<TDomain>(id);
-            _session.Delete(item);
+            var item = await _session.LoadAsync<TDomain>(id);
+            await _session.DeleteAsync(item);
         }
 
-        public void RemoveRange(IEnumerable<TDomain> items)
+        public async Task RemoveRange(IEnumerable<TDomain> items)
         {
+            IList<Task> tasks = new List<Task>(items.Count() + 1);
             foreach (TDomain item in items)
             {
-                _session.Delete(item);
+               tasks.Append(_session.DeleteAsync(item));
             }
+            await Task.WhenAll(tasks.ToArray());
         }
 
         public void Dispose()

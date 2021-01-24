@@ -12,48 +12,48 @@ namespace Tasktower.UserService.DataAccess.Repository
     {
         public UserRepository(ISession session) : base(session) { } 
 
-        public bool ExistsByEmail(string email)
+        public async Task<bool> ExistsByEmail(string email)
         {
-            return _session.Query<User>().Any(u => u.Email == email);
+            return await _session.Query<User>().AnyAsync(u => u.Email == email);
         }
 
-        public User? GetByEmail(string email)
+        public async Task<User> GetByEmail(string email)
         {
-            return _session.Query<User>().Where(u => u.Email == email).FirstOrDefault();
+            return await _session.Query<User>().Where(u => u.Email == email).FirstOrDefaultAsync();
         }
 
-        public void UpdatePasswordSaltAndPasswordHashByID(Guid id, byte[] passwordHash, byte[] passwordSalt)
+        public async Task UpdatePasswordSaltAndPasswordHashByID(Guid id, byte[] passwordHash, byte[] passwordSalt)
         {
-            _session.CreateQuery(@" 
+           await  _session.CreateQuery(@" 
                 UPDATE u FROM User as u 
                 Set u.PasswordHash = :PasswordHash, u.PasswordSalt = :PasswordSalt  
                 WHERE u.Id = :Id")
                 .SetParameter(":Id", id)
                 .SetParameter(":PasswordHash", passwordHash)
                 .SetParameter(":PasswordSalt", passwordSalt)
-                .ExecuteUpdate();
+                .ExecuteUpdateAsync();
         }
 
-        public void UpdateRolesById(Guid id, IEnumerable<string> roles)
+        public async Task UpdateRolesById(Guid id, IEnumerable<string> roles)
         {
-            _session.CreateQuery(@" 
+            await _session.CreateQuery(@" 
                 UPDATE u FROM User as u 
                 Set u.Roles = :Roles  
                 WHERE u.Id = :Id")
                 .SetParameter(":Id", id)
                 .SetParameter(":Roles", roles)
-                .ExecuteUpdate();
+                .ExecuteUpdateAsync();
         }
 
-        public void UpdateUserDataById(Guid id, string name)
+        public async Task UpdateUserDataById(Guid id, string name)
         {
-            _session.CreateQuery(@" 
+            await _session.CreateQuery(@" 
                 UPDATE u FROM User as u 
                 Set u.Name = :Name  
                 WHERE u.Id = :Id")
                 .SetParameter(":Id", id)
                 .SetParameter(":Name", name)
-                .ExecuteUpdate();
+                .ExecuteUpdateAsync();
         }
     }
 }

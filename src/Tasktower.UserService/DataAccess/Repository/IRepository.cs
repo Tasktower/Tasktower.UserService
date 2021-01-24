@@ -8,13 +8,13 @@ namespace Tasktower.UserService.DataAccess.Repository
 {
     public interface IRepository<TDomain>: IDisposable where TDomain : class
     {
-        TDomain GetById(object Id);
-        IEnumerable<TDomain> GetAll();
-        void Add(TDomain obj);
-        void AddRange(IEnumerable<TDomain> items);
-        void RemoveById(object id);
-        void Remove(TDomain item);
-        void RemoveRange(IEnumerable<TDomain> items);
+        Task<TDomain> GetById(object Id);
+        Task<List<TDomain>> GetAll();
+        Task Add(TDomain obj);
+        Task AddRange(IEnumerable<TDomain> items);
+        Task RemoveById(object id);
+        Task Remove(TDomain item);
+        Task RemoveRange(IEnumerable<TDomain> items);
         
 
     }
