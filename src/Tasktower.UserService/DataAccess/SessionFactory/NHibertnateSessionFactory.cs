@@ -18,7 +18,7 @@ namespace Tasktower.UserService.DataAccess.SessionFactory
         public NHibertnateSessionFactory(IConfiguration configuration)
         {
             var sessionFactory = Fluently.Configure()
-                .Database(PostgreSQLConfiguration.Standard
+                .Database(PostgreSQLConfiguration.PostgreSQL82
                     .ConnectionString(configuration.GetConnectionString("pgconnection"))
                     .ShowSql())
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<User>().Add<User.UserMap>())

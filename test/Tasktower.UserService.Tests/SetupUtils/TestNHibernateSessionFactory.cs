@@ -21,7 +21,7 @@ namespace Tasktower.UserService.Tests.SetupUtils
             var sessionFactory = Fluently.Configure()
                 .Database(SQLiteConfiguration.Standard.InMemory().ShowSql())
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<User>().Add<User.UserMap>())
-                .ExposeConfiguration(cfg => new SchemaExport(cfg).Create(false, false))
+                .ExposeConfiguration(cfg => new SchemaExport(cfg).Create(true, true))
                 .BuildSessionFactory();
             _sessionFactory = sessionFactory;
         }

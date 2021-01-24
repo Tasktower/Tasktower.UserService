@@ -17,13 +17,6 @@ namespace Tasktower.UserService.DataAccess.Repository
             _session = session;
         }
 
-        private void CloseSession()
-        {
-            _session.Close();
-            _session.Dispose();
-            _session = null;
-        }
-
         public async Task Add(TDomain item)
         {
            await _session.SaveAsync(item);
@@ -68,14 +61,6 @@ namespace Tasktower.UserService.DataAccess.Repository
                tasks.Append(_session.DeleteAsync(item));
             }
             await Task.WhenAll(tasks.ToArray());
-        }
-
-        public void Dispose()
-        {
-            if (_session != null)
-            {
-                CloseSession();
-            }
         }
     }
 }

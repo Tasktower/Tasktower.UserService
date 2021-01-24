@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {
-    public interface IRepository<TDomain>: IDisposable where TDomain : class
+    public interface IRepository<TDomain> where TDomain : class
     {
         Task<TDomain> GetById(object Id);
         Task<List<TDomain>> GetAll();

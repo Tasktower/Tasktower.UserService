@@ -34,7 +34,7 @@ namespace Tasktower.UserService.DataAccess.Repository
                 .ExecuteUpdateAsync();
         }
 
-        public async Task UpdateRolesById(Guid id, IEnumerable<string> roles)
+        public async Task UpdateRolesById(Guid id, string[] roles)
         {
             await _session.CreateQuery(@" 
                 UPDATE u FROM User as u 
