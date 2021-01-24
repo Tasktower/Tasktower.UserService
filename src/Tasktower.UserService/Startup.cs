@@ -26,7 +26,12 @@ namespace Tasktower.UserService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Data access services
+            services.AddScoped<DataAccess.SessionFactory.INHibernateSessionFactory,
+                DataAccess.SessionFactory.NHibertnateSessionFactory>();
+            services.AddScoped<DataAccess.IUnitOfWorkFactory, DataAccess.UnitOfWorkFactory>();
 
+            // Routing services
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

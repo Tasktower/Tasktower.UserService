@@ -1,6 +1,6 @@
 using System;
 
-namespace Tasktower.UserService
+namespace Tasktower.UserService.Domain
 {
     public class WeatherForecast
     {
