@@ -1,13 +1,8 @@
-﻿BEGIN;
-
-CREATE OR REPLACE FUNCTION update_modified_column() 
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = now();
-    RETURN NEW; 
-END;
-$$ language 'plpgsql';
-
-CREATE TRIGGER update_created_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE  update_modified_column();
-
-COMMIT;
+﻿CREATE TRIGGER [dbo].[updateDatetime]
+ON [dbo].[users]
+AFTER INSERT, UPDATE 
+AS UPDATE [dbo].[users] SET updated_at = GETDATE()
+	FROM [users] t
+		INNER JOIN inserted i
+			ON t.ID = i.ID
+GO

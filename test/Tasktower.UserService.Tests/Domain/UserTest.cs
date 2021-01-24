@@ -29,7 +29,7 @@ namespace Tasktower.UserService.Tests.Domain
                 Name = "Super User",
                 Email = "superuser@example.com",
                 EmailVerified = true,
-                Roles = new string[]{ "SUPERUSER" },
+                Roles = "SUPERUSER",
                 PasswordSalt = passwordSalt,
                 PasswordHash = passwordHash
             };
@@ -41,7 +41,7 @@ namespace Tasktower.UserService.Tests.Domain
             Assert.Equal("Super User", user.Name);
             Assert.Equal("superuser@example.com", user.Email);
             Assert.True(user.EmailVerified);
-            Assert.Equal(new string[]{ "SUPERUSER" }, user.Roles);
+            Assert.Equal("SUPERUSER", user.Roles);
             Assert.Equal(passwordHash, user.PasswordHash);
             Assert.Equal(passwordSalt, user.PasswordSalt);
         }

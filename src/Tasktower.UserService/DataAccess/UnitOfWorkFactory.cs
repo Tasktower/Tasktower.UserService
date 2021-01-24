@@ -1,23 +1,28 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Tasktower.UserService.DataAccess.SessionFactory;
+using Tasktower.UserService.DataAccess.DataStoreAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tasktower.UserService.DataAccess
 {
     public class UnitOfWorkFactory : IUnitOfWorkFactory
     {
-        private readonly INHibernateSessionFactory _nhibernateSessionFactory;
-        public UnitOfWorkFactory(INHibernateSessionFactory nHibertnateSessionFactory)
+        private readonly IConfiguration _configuration;
+        private readonly DbContextOptions<EFDBContext> _efdbOptions;
+        public UnitOfWorkFactory(IConfiguration configuration)
         {
-            _nhibernateSessionFactory = nHibertnateSessionFactory;
+            _configuration = configuration;
+            _efdbOptions = new DbContextOptionsBuilder<EFDBContext>()
+                .UseSqlServer(_configuration.GetConnectionString("mssqlconnection"))
+                .Options;
         }
 
         public IUnitOfWork Create(bool useDatabase = true, bool useMemStore = true, bool useKeyVault = true)
         {
-            NHibernate.ISession dbSession = useDatabase? _nhibernateSessionFactory.OpenNewSession(): null;
-            return new UnitOfWork(dbSession);
+            return new UnitOfWork(useDatabase ? new EFDBContext(_efdbOptions) : null);
         }
     }
 }

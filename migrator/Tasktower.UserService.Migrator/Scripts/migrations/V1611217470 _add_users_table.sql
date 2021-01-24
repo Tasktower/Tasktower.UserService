@@ -1,18 +1,16 @@
-﻿BEGIN;
-
-CREATE TABLE users
+﻿
+CREATE TABLE [dbo].users
 (
-    id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now(),
-    name character varying(1024) COLLATE pg_catalog."default" NOT NULL,
-    email character varying(1024) COLLATE pg_catalog."default" NOT NULL,
-    email_verified boolean NOT NULL DEFAULT false,
-    password_hash bytea,
-    password_salt bytea,
-    roles text[] COLLATE pg_catalog."default" NOT NULL DEFAULT '{standard}'::text[],
-    CONSTRAINT accounts_pkey PRIMARY KEY (id),
-    CONSTRAINT accounts_email_key UNIQUE (email)
-);
+    id uniqueidentifier NOT NULL DEFAULT NEWID() CONSTRAINT users_pk PRIMARY KEY,
+    created_at datetime DEFAULT GETDATE(),
+    updated_at datetime DEFAULT GETDATE(),
+    name character varying(100) NOT NULL,
+    email character varying(320) NOT NULL,
+    email_verified BIT  NOT NULL DEFAULT 0,
+    password_hash varbinary(max),
+    password_salt varbinary(max),
+    roles varchar(max),
+    CONSTRAINT users_email_key UNIQUE(email)
+)
 
-COMMIT;
+GO

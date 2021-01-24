@@ -1,66 +1,68 @@
-﻿using NHibernate;
-using NHibernate.Linq;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Tasktower.UserService.DataAccess.DataStoreAccess;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {
 
-    public class RepositoryBase<TDomain> : IRepository<TDomain> where TDomain : class
+    public abstract class RepositoryBase<TDomain> : IRepository<TDomain> where TDomain : class
     {
-        protected ISession _session = null;
+        protected DbSet<TDomain> _dbContext;
 
-        public RepositoryBase(ISession session) {
-            _session = session;
+        public RepositoryBase(DbSet<TDomain> dbContext) {
+            _dbContext = dbContext;
         }
 
         public async Task Add(TDomain item)
         {
-           await _session.SaveAsync(item);
+            await _dbContext.AddAsync(item);
         }
 
         public async Task AddRange(IEnumerable<TDomain> items)
         {
-            IList<Task> tasks = new List<Task>(items.Count() + 1);
-            foreach(TDomain item in items)
-            {
-                tasks.Append(_session.Save(item));
-            }
-            await Task.WhenAll(tasks);
+            await _dbContext.AddRangeAsync(items.ToArray());
         }
 
         public async Task<List<TDomain>> GetAll()
         {
-            return await _session.Query<TDomain>().ToListAsync();
+            return await _dbContext.ToListAsync();
         }
 
         public async Task<TDomain> GetById(object Id)
         {
-            return await _session.LoadAsync<TDomain>(Id);
+            return await _dbContext.FindAsync(Id);
         }
 
         public async Task Remove(TDomain item)
         {
-            await _session.DeleteAsync(item);
+            var task = Task.Delay(1);
+            _dbContext.Remove(item);
+            await task;
         }
 
         public  async Task RemoveById(object id)
         {
-            var item = await _session.LoadAsync<TDomain>(id);
-            await _session.DeleteAsync(item);
+            var task = Task.Delay(1);
+            var item = await _dbContext.FindAsync(id);
+            if (item != null) 
+            {
+                _dbContext.Remove(item);
+            }
+            await task;
         }
 
         public async Task RemoveRange(IEnumerable<TDomain> items)
         {
-            IList<Task> tasks = new List<Task>(items.Count() + 1);
+            var task = Task.Delay(1);
             foreach (TDomain item in items)
             {
-               tasks.Append(_session.DeleteAsync(item));
+                _dbContext.Remove(item);
             }
-            await Task.WhenAll(tasks.ToArray());
+            await task;
         }
     }
 }

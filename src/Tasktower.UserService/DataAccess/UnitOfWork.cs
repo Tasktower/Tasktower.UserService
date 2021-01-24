@@ -1,60 +1,66 @@
-﻿using NHibernate;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Tasktower.UserService.DataAccess.DataStoreAccess;
 using Tasktower.UserService.DataAccess.Repository;
 
 namespace Tasktower.UserService.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private ISession _dbSession;
-        private ITransaction _dbTransaction;
+        private EFDBContext _efDbContext;
 
         public IUserRepository UserRepository { get; private set; }
-        public UnitOfWork(ISession dbSession)
+        public UnitOfWork(EFDBContext dbContext)
         {
-            _dbSession = dbSession; 
-            if (_dbSession != null) {
-                _dbTransaction = _dbSession.BeginTransaction();
-                UserRepository = new UserRepository(_dbSession);
+            _efDbContext = dbContext; 
+            if (_efDbContext != null) {
+                UserRepository = new UserRepository(_efDbContext.UserItems);
             }
         }
 
         public void Complete()
         {
-            if (_dbSession != null)
+            if (_efDbContext != null)
             {
-                _dbSession.Flush();
-                _dbTransaction.Commit();
-            }
-        }
-        public void Rollback()
-        {
-            if (_dbSession != null )
-            {
-                _dbTransaction.Rollback();
-                CloseDBSession();
+                _efDbContext.SaveChanges();
             }
         }
 
-        private void CloseDBSession() 
+        public async Task CompleteAsync()
         {
-            _dbTransaction.Dispose();
-            _dbTransaction = null;
-            _dbSession.Close();
-            _dbSession.Dispose();
-            _dbSession = null;
+            if (_efDbContext != null)
+            {
+                await _efDbContext.SaveChangesAsync();
+            }
+        }
+        public async Task RollbackAsync()
+        {
+            if (_efDbContext != null )
+            {
+               await _efDbContext.DisposeAsync();
+                _efDbContext = null;
+            }
+        }
+
+        public void Rollback()
+        {
+            if (_efDbContext != null)
+            {
+                _efDbContext.Dispose();
+                _efDbContext = null;
+            }
         }
 
 
         public void Dispose()
         {
-            if (_dbSession != null)
+            if (_efDbContext != null)
             {
-                UserRepository.Dispose();
-                CloseDBSession();
+                _efDbContext.Dispose();
+                _efDbContext = null;
+
             }
         }
     }

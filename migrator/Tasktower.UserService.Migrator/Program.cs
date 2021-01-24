@@ -16,7 +16,7 @@ namespace Tasktower.UserService.Migrator
         public class Options
         {
             [Option('c', "connectionstring", Required = true,
-                HelpText = "Postgresql connection string, must be in the format:" +
+                HelpText = "SQL Server connection string, must be in the format:" +
                     "\"Host = hostname; User Id = username; Password = userpassword; Database = sbname; Port = 5432\"")]
             public string ConnectionString { get; set; }
 
@@ -38,7 +38,7 @@ namespace Tasktower.UserService.Migrator
 
 
             var upgraderBuilder = DeployChanges.To
-                .PostgresqlDatabase(connectionString)
+                .SqlDatabase(connectionString)
                 .WithScriptsFromFileSystem("./Scripts/Migrations");
             if (addData)
             {

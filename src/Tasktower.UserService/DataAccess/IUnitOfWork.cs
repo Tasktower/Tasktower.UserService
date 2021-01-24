@@ -9,8 +9,12 @@ namespace Tasktower.UserService.DataAccess
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository UserRepository { get;  }
+
         void Complete();
+        Task CompleteAsync();
 
         void Rollback();
+
+        Task RollbackAsync();
     }
 }

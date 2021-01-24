@@ -27,8 +27,6 @@ namespace Tasktower.UserService
         public void ConfigureServices(IServiceCollection services)
         {
             // Data access services
-            services.AddScoped<DataAccess.SessionFactory.INHibernateSessionFactory,
-                DataAccess.SessionFactory.NHibertnateSessionFactory>();
             services.AddScoped<DataAccess.IUnitOfWorkFactory, DataAccess.UnitOfWorkFactory>();
 
             // Routing services

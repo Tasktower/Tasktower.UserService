@@ -1,5 +1,4 @@
-﻿using NHibernate;
-using NHibernate.Linq;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,50 +9,56 @@ namespace Tasktower.UserService.DataAccess.Repository
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {
-        public UserRepository(ISession session) : base(session) { } 
+        public UserRepository(DbSet<User> context) : base(context) { } 
 
         public async Task<bool> ExistsByEmail(string email)
         {
-            return await _session.Query<User>().AnyAsync(u => u.Email == email);
+            return await _dbContext.AnyAsync(u => u.Email == email);
         }
 
         public async Task<User> GetByEmail(string email)
         {
-            return await _session.Query<User>().Where(u => u.Email == email).FirstOrDefaultAsync();
+            return await _dbContext.Where(u => u.Email == email).FirstAsync();
         }
 
         public async Task UpdatePasswordSaltAndPasswordHashByID(Guid id, byte[] passwordHash, byte[] passwordSalt)
         {
-           await  _session.CreateQuery(@" 
-                UPDATE u FROM User as u 
-                Set u.PasswordHash = :PasswordHash, u.PasswordSalt = :PasswordSalt  
-                WHERE u.Id = :Id")
-                .SetParameter(":Id", id)
-                .SetParameter(":PasswordHash", passwordHash)
-                .SetParameter(":PasswordSalt", passwordSalt)
-                .ExecuteUpdateAsync();
+            var task = Task.Delay(1);
+            var user = await _dbContext.FindAsync(id);
+            if (user == null)
+            {
+                return;
+            }
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            _dbContext.Update(user);
+            await task;
         }
 
-        public async Task UpdateRolesById(Guid id, string[] roles)
+        public async Task UpdateRolesById(Guid id, string roles)
         {
-            await _session.CreateQuery(@" 
-                UPDATE u FROM User as u 
-                Set u.Roles = :Roles  
-                WHERE u.Id = :Id")
-                .SetParameter(":Id", id)
-                .SetParameter(":Roles", roles)
-                .ExecuteUpdateAsync();
+            var task = Task.Delay(1);
+            var user = await _dbContext.FindAsync(id);
+            if (user == null)
+            {
+                return;
+            }
+            user.Roles = roles;
+            _dbContext.Update(user);
+            await task;
         }
 
         public async Task UpdateUserDataById(Guid id, string name)
         {
-            await _session.CreateQuery(@" 
-                UPDATE u FROM User as u 
-                Set u.Name = :Name  
-                WHERE u.Id = :Id")
-                .SetParameter(":Id", id)
-                .SetParameter(":Name", name)
-                .ExecuteUpdateAsync();
+            var task = Task.Delay(1);
+            var user = await _dbContext.FindAsync(id);
+            if (user == null)
+            {
+                return;
+            }
+            user.Name = name;
+            _dbContext.Update(user);
+            await task;
         }
     }
 }

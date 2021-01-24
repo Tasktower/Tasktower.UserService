@@ -1,30 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Tasktower.UserService.Domain
 {
+    [Table("users")]
     public class User : AbstractDomain
     {
-        public virtual string Name { get; set; }
-        public virtual string Email { get; set; }
+        [Column("name")]
+        public string Name { get; set; }
+        [Column("email")]
+        public string Email { get; set; }
 
-        public virtual bool EmailVerified { get; set; }
-        public virtual IList<string> Roles { get; set; }
-        public virtual byte[] PasswordSalt { get; set; }
-        public virtual byte[] PasswordHash { get; set; }
+        [Column("email_verified")]
+        public bool EmailVerified { get; set; }
 
-        public class UserMap : User.AbstractDomainMap<User> {
-            public UserMap() : base() {
-                Table("users");
-                Map(x => x.Name).Column("name").CustomSqlType("uuid");
-                Map(x => x.Email).Column("email");
-                Map(x => x.EmailVerified).Column("email_verified");
-                Map(x => x.Roles).Column("roles").CustomSqlType("text[]");
-                Map(x => x.PasswordSalt).Column("password_salt");
-                Map(x => x.PasswordHash).Column("password_hash");
-            }
+        [Column("roles")]
+        public string Roles { get; set; }
+        [Column("password_salt")]
+        public byte[] PasswordSalt { get; set; }
+        [Column("password_hash")]
+        public byte[] PasswordHash { get; set; }
+
+        public static string RolesListToRoles(string[] rolesList)
+        {
+            return string.Join(",", rolesList);
         }
+
+        public static string[] RolesToRolesList(string roles)
+        {
+            return roles.Split(",");
+        }   
     }
 }
