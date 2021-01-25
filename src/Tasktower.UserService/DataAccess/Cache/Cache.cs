@@ -9,12 +9,12 @@ namespace Tasktower.UserService.DataAccess.Cache
 {
     public class Cache<T> : ICache<T>
     {
-        private readonly string StorageName;
+        private static readonly string _storageName = "User_Service";
         protected readonly string _prefix;
 
         protected string FullKey(string id) 
         {
-            return $"{StorageName}_{_prefix}_{id}";
+            return $"{_storageName}_{_prefix}_{id}";
         }
 
         IDatabase _cacheDB;
