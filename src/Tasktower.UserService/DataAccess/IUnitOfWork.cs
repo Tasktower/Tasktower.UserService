@@ -8,7 +8,7 @@ namespace Tasktower.UserService.DataAccess
 {
     public interface IUnitOfWork : IDisposable
     {
-        IUserRepository UserRepository { get;  }
+        IUserRepository UserRepo { get;  }
 
         void Complete();
         Task CompleteAsync();

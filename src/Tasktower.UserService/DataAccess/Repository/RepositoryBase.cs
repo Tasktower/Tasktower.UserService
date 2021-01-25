@@ -9,7 +9,7 @@ using Tasktower.UserService.DataAccess.DataStoreAccessors;
 namespace Tasktower.UserService.DataAccess.Repository
 {
 
-    public abstract class RepositoryBase<TDomain> : IRepository<TDomain> where TDomain : class
+    public class RepositoryBase<TDomain> : IRepository<TDomain> where TDomain : class
     {
         protected DbSet<TDomain> _dbContext;
 

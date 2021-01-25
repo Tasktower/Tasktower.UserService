@@ -29,7 +29,7 @@ namespace Tasktower.UserService.Controllers
             IEnumerable<User> user;
             using (var uow = _unitOfWorkFactory.Create())
             {
-                user = await uow.UserRepository.GetAll();
+                user = await uow.UserRepo.GetAll();
             }
             return user;
         }
@@ -45,7 +45,7 @@ namespace Tasktower.UserService.Controllers
             }
             using (var uow = _unitOfWorkFactory.Create())
             {
-                user = await uow.UserRepository.GetById(uuid);
+                user = await uow.UserRepo.GetById(uuid);
             }
             if (user == null) {
                 return NotFound();

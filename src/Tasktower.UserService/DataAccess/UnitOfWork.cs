@@ -3,20 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tasktower.UserService.DataAccess.DataStoreAccessors;
+using Tasktower.UserService.DataAccess.Cache;
 using Tasktower.UserService.DataAccess.Repository;
 
 namespace Tasktower.UserService.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private EFDBContext _efDbContext;
+        private EntityFrameworkDBContext _efDbContext;
+        private StackExchange.Redis.IDatabase _cacheDB;
+        private StackExchange.Redis.IDatabase _keyvaultDB;
 
-        public IUserRepository UserRepository { get; private set; }
-        public UnitOfWork(EFDBContext dbContext)
+        public IUserRepository UserRepo { get; private set; }
+        public IPwdResetTokenCache PwdResetTknCache { get; private set; }
+        public IRefreshTokenCache RefreshTknCache { get; private set; }
+        public UnitOfWork(EntityFrameworkDBContext dbContext, 
+            StackExchange.Redis.IDatabase cacheDB,
+            StackExchange.Redis.IDatabase keyvaultDB)
         {
-            _efDbContext = dbContext; 
+            _efDbContext = dbContext;
+            _cacheDB = cacheDB;
+            _keyvaultDB = keyvaultDB;
             if (_efDbContext != null) {
-                UserRepository = new UserRepository(_efDbContext.UserItems);
+                UserRepo = new UserRepository(_efDbContext.UserItems);
+            }
+            if (_cacheDB != null)
+            {
+                PwdResetTknCache = new PwdResetTokenCache(_cacheDB);
+                RefreshTknCache = new RefreshTokenCache(_cacheDB);
+            }
+            if (_keyvaultDB != null)
+            {
+                // init keyvault
             }
         }
 
