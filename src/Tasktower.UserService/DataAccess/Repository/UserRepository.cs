@@ -35,7 +35,7 @@ namespace Tasktower.UserService.DataAccess.Repository
             await task;
         }
 
-        public async Task UpdateRolesById(Guid id, string roles)
+        public async Task UpdateRolesById(Guid id, string[] roles)
         {
             var task = Task.Delay(1);
             var user = await _dbContext.FindAsync(id);
@@ -43,7 +43,7 @@ namespace Tasktower.UserService.DataAccess.Repository
             {
                 return;
             }
-            user.Roles = roles;
+            user.RolesList = roles;
             _dbContext.Update(user);
             await task;
         }

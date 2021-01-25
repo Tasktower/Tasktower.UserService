@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 
 namespace Tasktower.UserService
 {
@@ -26,6 +27,7 @@ namespace Tasktower.UserService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             // Data access services
             services.AddScoped<DataAccess.IUnitOfWorkFactory, DataAccess.UnitOfWorkFactory>();
 
@@ -35,6 +37,7 @@ namespace Tasktower.UserService
             // Routing services
             services.AddCors();
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tasktower.UserService", Version = "v1" });
