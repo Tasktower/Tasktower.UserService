@@ -36,9 +36,21 @@ namespace Tasktower.UserService.Controllers
 
         // GET api/<UserTestController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<User>> Get(string id)
         {
-            return "value";
+            User user;
+            Guid uuid;
+            if (!Guid.TryParse(id, out uuid)) {
+                return NotFound();
+            }
+            using (var uow = _unitOfWorkFactory.Create())
+            {
+                user = await uow.UserRepository.GetById(uuid);
+            }
+            if (user == null) {
+                return NotFound();
+            }
+            return user;
         }
 
         // POST api/<UserTestController>
