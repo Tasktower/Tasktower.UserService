@@ -46,7 +46,7 @@ namespace Tasktower.UserService.DataAccess.Cache
         private async Task SetWithOptions(string id, T value, TimeSpan? absoluteExpireTime = null, When when = When.Always)
         {
             var jsonData = JsonSerializer.Serialize(value);
-            await _cacheDB.StringSetAsync(id, jsonData, 
+            await _cacheDB.StringSetAsync(FullKey(id), jsonData, 
                 absoluteExpireTime ?? TimeSpan.FromSeconds(60), when);
         }
 
@@ -58,6 +58,11 @@ namespace Tasktower.UserService.DataAccess.Cache
         public async Task Set(string id, T value, TimeSpan? absoluteExpireTime = null)
         {
             await SetWithOptions(id, value, absoluteExpireTime, When.Always);
+        }
+
+        public async Task Delete(string id)
+        {
+            await _cacheDB.KeyDeleteAsync(FullKey(id));
         }
     }
 }

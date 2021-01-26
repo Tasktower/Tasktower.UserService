@@ -10,5 +10,7 @@ namespace Tasktower.UserService.DataAccess.Cache
         Task<T> Get(string id);
         Task SetIfNotExists(string id, T value, TimeSpan? absoluteExpireTime = null);
         Task Set(string id, T value, TimeSpan? absoluteExpireTime = null);
+        Task Delete(string id);
+
     }
 }
