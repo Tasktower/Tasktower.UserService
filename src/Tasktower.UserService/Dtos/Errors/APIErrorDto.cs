@@ -7,20 +7,20 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Tasktower.UserService.Errors;
 
-namespace Tasktower.UserService.Errors
+namespace Tasktower.UserService.Dtos.Errors
 {
-    public class AppErrorPayload
+    public class APIErrorDto
     {
-        private class ErrorCodeConverter : JsonConverter<AppException.Code>
+        private class ErrorCodeConverter : JsonConverter<APIException.Code>
         {
-            public override AppException.Code Read(
+            public override APIException.Code Read(
                 ref Utf8JsonReader reader,
                 Type typeToConvert,
                 JsonSerializerOptions options)
             {
                 try
                 {
-                    return (AppException.Code)Enum.Parse(typeof(AppException.Code), reader.GetString());
+                    return (APIException.Code)Enum.Parse(typeof(APIException.Code), reader.GetString());
                 }
                 catch (Exception)
                 {
@@ -31,7 +31,7 @@ namespace Tasktower.UserService.Errors
 
             public override void Write(
                 Utf8JsonWriter writer,
-                AppException.Code code,
+                APIException.Code code,
                 JsonSerializerOptions options) =>
                     writer.WriteStringValue(code.ToString());
         }
@@ -39,7 +39,7 @@ namespace Tasktower.UserService.Errors
         public int StatusCode { get; set; }
 
         [JsonConverter(typeof(ErrorCodeConverter))]
-        public AppException.Code ErrorCode { get; set; }
+        public APIException.Code ErrorCode { get; set; }
         public string Message { get; set; }
     }
 }

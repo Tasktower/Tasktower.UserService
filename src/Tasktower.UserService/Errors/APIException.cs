@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Tasktower.UserService.Errors;
+using Tasktower.UserService.Dtos.Errors;
 
 namespace Tasktower.UserService.Errors
 {
-    public class AppException : Exception
+    public class APIException : Exception
     {
         public enum Code
         {
@@ -15,18 +15,18 @@ namespace Tasktower.UserService.Errors
             ACCOUNT_FAILED_TO_CREATE
         }
 
-        public static AppException CreateAppException(Code code, params string[] args) 
+        public static APIException Create(Code code, params string[] args) 
         {
             return code switch
             {
-                Code.ACCOUNT_NOT_FOUND => new AppException(code, 400, "Account not found", args),
-                Code.ACCOUNT_FAILED_TO_CREATE => new AppException(code, 400, "Account failed to create", args),
-                Code.BAD_REQUEST => new AppException(code, 500, "Bad Request, Something went wrong", args),
-                _ => new AppException(Code.BAD_REQUEST, 500, "Bad Request, Something went wrong", args),
+                Code.ACCOUNT_NOT_FOUND => new APIException(code, 400, "Account not found", args),
+                Code.ACCOUNT_FAILED_TO_CREATE => new APIException(code, 400, "Account failed to create", args),
+                Code.BAD_REQUEST => new APIException(code, 500, "Bad Request, Something went wrong", args),
+                _ => new APIException(Code.BAD_REQUEST, 500, "Bad Request, Something went wrong", args),
             };
         }
 
-        private AppException(Code code,
+        private APIException(Code code,
             int statusCode,
             string messageFormat,
             params string[] args) : base(string.Format(messageFormat, args))
@@ -39,9 +39,9 @@ namespace Tasktower.UserService.Errors
 
         public Code ErrorCode { get; set; }
 
-        public AppErrorPayload Payload { get 
+        public APIErrorDto Payload { get 
             {
-                return new AppErrorPayload
+                return new APIErrorDto
                 {
                     Message = Message,
                     StatusCode = StatusCode,

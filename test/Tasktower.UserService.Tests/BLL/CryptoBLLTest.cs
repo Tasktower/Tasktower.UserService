@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,21 @@ namespace Tasktower.UserService.Tests.BLL
             byte[] salt = _cryptoBLL.GeneratePasswordSalt();
             byte[] passwordHash = _cryptoBLL.PasswordHash(originalPassword, salt);
             Assert.True(_cryptoBLL.VerifyPasswordHash(originalPassword, passwordHash, salt));
+        }
+
+        [Fact]
+        public void PasswordHash_SuccessfulValidationLastsNoLessThan250MS_WhenSamePasswordUsedForValidationOnHash()
+        {
+            // Tests if password hashing is secure against brute force attacks
+            // Validation should generally last at least 250 seconds
+            string originalPassword = "mypassword";
+            byte[] salt = _cryptoBLL.GeneratePasswordSalt();
+            byte[] passwordHash = _cryptoBLL.PasswordHash(originalPassword, salt);
+            var timer = Stopwatch.StartNew();
+            var result = _cryptoBLL.VerifyPasswordHash(originalPassword, passwordHash, salt);
+            timer.Stop();
+            Assert.True(timer.ElapsedMilliseconds >= 250);
+            Assert.True(result);
         }
 
         [Fact]

@@ -24,7 +24,8 @@ namespace Tasktower.UserService.BLL
 
         public byte[] PasswordHash(string password, byte[] passwordSalt) {
             var passwordBytes = System.Text.Encoding.Unicode.GetBytes(password);
-            var hash = SCrypt.ComputeDerivedKey(passwordBytes, passwordSalt, 262144, 8, 1, null, 128);
+            byte[] hash = new byte[128];
+            SCrypt.ComputeKey(passwordBytes, passwordSalt, 32768, 8, 1, 1, hash); // 32768
             return hash;
         }
 
