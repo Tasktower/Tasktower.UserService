@@ -27,10 +27,9 @@ namespace Tasktower.UserService.Controllers
         public async Task<IEnumerable<User>> Get()
         {
             IEnumerable<User> user;
-            using (var uow = _unitOfWorkFactory.Create())
-            {
-                user = await uow.UserRepo.GetAll();
-            }
+            using var uow = _unitOfWorkFactory.Create();
+            
+            user = await uow.UserRepo.GetAll();
             return user;
         }
 
@@ -39,17 +38,24 @@ namespace Tasktower.UserService.Controllers
         public async Task<ActionResult<User>> Get(string id)
         {
             User user;
-            Guid uuid;
-            if (!Guid.TryParse(id, out uuid)) {
-                return NotFound();
-            }
-            using (var uow = _unitOfWorkFactory.Create())
+            if (!Guid.TryParse(id, out Guid uuid))
             {
-                user = await uow.UserRepo.GetById(uuid);
-            }
-            if (user == null) {
                 return NotFound();
             }
+
+            using var uow = _unitOfWorkFactory.Create();
+           
+            var userCache = uow.NewCache<User>("api/<UserTestController>/{id}");
+            user = await userCache.Get(uuid.ToString());
+            if (user == null) {
+                user = await uow.UserRepo.GetById(uuid);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                _ = userCache.SetIfNotExists(uuid.ToString(), user, TimeSpan.FromSeconds(60));
+            }
+
             return user;
         }
 

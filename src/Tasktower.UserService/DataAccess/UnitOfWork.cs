@@ -15,8 +15,13 @@ namespace Tasktower.UserService.DataAccess
         private StackExchange.Redis.IDatabase _keyvaultDB;
 
         public IUserRepository UserRepo { get; private set; }
-        public IPwdResetTokenCache PwdResetTknCache { get; private set; }
-        public IRefreshTokenCache RefreshTknCache { get; private set; }
+
+
+        public ICache<T> NewRawCache<T>(string prefix)
+        {
+            return new Cache<T>(_cacheDB, prefix);
+        }
+
         public UnitOfWork(EntityFrameworkDBContext dbContext, 
             StackExchange.Redis.IDatabase cacheDB,
             StackExchange.Redis.IDatabase keyvaultDB)
@@ -26,11 +31,6 @@ namespace Tasktower.UserService.DataAccess
             _keyvaultDB = keyvaultDB;
             if (_efDbContext != null) {
                 UserRepo = new UserRepository(_efDbContext.UserItems);
-            }
-            if (_cacheDB != null)
-            {
-                PwdResetTknCache = new PwdResetTokenCache(_cacheDB);
-                RefreshTknCache = new RefreshTokenCache(_cacheDB);
             }
             if (_keyvaultDB != null)
             {
