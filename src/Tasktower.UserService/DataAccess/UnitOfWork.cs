@@ -16,6 +16,10 @@ namespace Tasktower.UserService.DataAccess
 
         public IUserRepository UserRepo { get; private set; }
 
+        public ICache<T> NewCache<T>(CachePrefix prefix)
+        {
+            return new Cache<T>(_cacheDB, prefix);
+        }
 
         public ICache<T> NewRawCache<T>(string prefix)
         {

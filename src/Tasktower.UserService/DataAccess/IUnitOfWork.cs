@@ -11,9 +11,11 @@ namespace Tasktower.UserService.DataAccess
     {
         IUserRepository UserRepo { get;  }
 
-        ICache<string> PwdResetTokenCache => NewCache<string>(CachePrefix.PASSWORD_RESET_TOKEN.ToString());
-        ICache<string> RefreshTokenCache => NewCache<string>(CachePrefix.REFRESH_TOKEN.ToString());
-        ICache<string> EmailVerifyTokenCache => NewCache<string>(CachePrefix.EMAIL_VERIFY_TOKEN.ToString());
+        ICache<string> PwdResetTokenCache => NewCache<string>(CachePrefix.PASSWORD_RESET_TOKEN);
+        ICache<string> RefreshTokenCache => NewCache<string>(CachePrefix.REFRESH_TOKEN);
+        ICache<string> EmailVerifyTokenCache => NewCache<string>(CachePrefix.EMAIL_VERIFY_TOKEN);
+
+        ICache<T> NewCache<T>(CachePrefix prefix);
         ICache<T> NewCache<T>(string prefix = "")
         {
             Type type = typeof(T);

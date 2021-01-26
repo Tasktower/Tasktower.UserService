@@ -19,6 +19,10 @@ namespace Tasktower.UserService.DataAccess.Cache
 
         IDatabase _cacheDB;
 
+        public Cache(IDatabase cacheDB, CachePrefix prefix) : this(cacheDB, prefix.ToString())
+        {
+        }
+
         public Cache(IDatabase cacheDB, string prefix) 
         {
             _cacheDB = cacheDB;
