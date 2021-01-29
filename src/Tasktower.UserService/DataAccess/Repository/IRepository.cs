@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {
-    public interface IRepository<TDomain> where TDomain : class
+    public interface IRepository<TDomain, IDType> where TDomain : class
     {
-        Task<TDomain> GetById(object Id);
+        Task<TDomain> GetById(IDType Id);
         Task<List<TDomain>> GetAll();
         Task Add(TDomain obj);
         Task AddRange(IEnumerable<TDomain> items);
-        Task RemoveById(object id);
+        Task RemoveById(IDType id);
         Task Remove(TDomain item);
         Task RemoveRange(IEnumerable<TDomain> items);
         

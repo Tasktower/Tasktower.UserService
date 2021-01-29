@@ -16,6 +16,6 @@ namespace Tasktower.UserService.DataAccess
         /// <param name="useKeyVault">Key vault is usable if true</param>
         /// <param name="useCache">Cache repositories are usable if true</param>
         /// <returns></returns>
-        IUnitOfWork Create(bool useDatabase = true, bool useKeyVault = true, bool useCache = true);
+        IUnitOfWork Create(bool useDatabase = true, bool useCache = true);
     }
 }

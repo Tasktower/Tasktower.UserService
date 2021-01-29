@@ -14,7 +14,6 @@ namespace Tasktower.UserService.DataAccess
         private readonly IConfiguration _configuration;
         private readonly DbContextOptions<EntityFrameworkDBContext> _efdbOptions;
         private readonly IConnectionMultiplexer _cacheMuxer;
-        private readonly IConnectionMultiplexer _keyVaultMuxer;
         public UnitOfWorkFactory(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -22,15 +21,13 @@ namespace Tasktower.UserService.DataAccess
                 .UseSqlServer(_configuration.GetConnectionString("mssqlconnection"))
                 .Options;
             _cacheMuxer = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("redisMemStoreConn"));
-            _keyVaultMuxer = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("redisKeyVaultConn"));
         }
 
-        public IUnitOfWork Create(bool useDatabase = true, bool useKeyVault = true, bool useCache = true)
+        public IUnitOfWork Create(bool useDatabase = true, bool useCache = true)
         {
             return new UnitOfWork(
                 useDatabase ? new EntityFrameworkDBContext(_efdbOptions) : null,
-                useCache? _cacheMuxer.GetDatabase(): null,
-                useKeyVault ? _keyVaultMuxer.GetDatabase() : null);
+                useCache? _cacheMuxer.GetDatabase(): null);
         }
     }
 }

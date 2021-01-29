@@ -45,7 +45,8 @@ namespace Tasktower.UserService.Controllers
 
             using var uow = _unitOfWorkFactory.Create();
            
-            var userCache = uow.NewCache<User>("api/<UserTestController>/{id}");
+            var userCache = uow.UserCache;
+
             user = await userCache.Get(uuid.ToString());
             if (user == null) {
                 user = await uow.UserRepo.GetById(uuid);

@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace Tasktower.UserService.DataAccess.Cache
 {
-    public enum CachePrefix
+    public enum CacheTag
     {
         PASSWORD_RESET_TOKEN,
         REFRESH_TOKEN,
-        EMAIL_VERIFY_TOKEN
+        EMAIL_VERIFY_TOKEN,
+        USER
     }
 }

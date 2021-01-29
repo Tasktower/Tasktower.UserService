@@ -9,7 +9,7 @@ using Tasktower.UserService.DataAccess.DataStoreAccessors;
 namespace Tasktower.UserService.DataAccess.Repository
 {
 
-    public class RepositoryBase<TDomain> : IRepository<TDomain> where TDomain : class
+    public class RepositoryBase<TDomain, IDType> : IRepository<TDomain, IDType> where TDomain : class
     {
         protected DbSet<TDomain> _dbContext;
 
@@ -32,7 +32,7 @@ namespace Tasktower.UserService.DataAccess.Repository
             return await _dbContext.ToListAsync();
         }
 
-        public async Task<TDomain> GetById(object Id)
+        public async Task<TDomain> GetById(IDType Id)
         {
             return await _dbContext.FindAsync(Id);
         }
@@ -44,7 +44,7 @@ namespace Tasktower.UserService.DataAccess.Repository
             await task;
         }
 
-        public  async Task RemoveById(object id)
+        public  async Task RemoveById(IDType id)
         {
             var task = Task.Delay(1);
             var item = await _dbContext.FindAsync(id);

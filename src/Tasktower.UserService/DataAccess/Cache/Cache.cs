@@ -14,26 +14,18 @@ namespace Tasktower.UserService.DataAccess.Cache
 
         protected string FullKey(string id) 
         {
-            return $"{_storageName}_{_prefix}_{id}";
+            return $"{_prefix}:{id}";
         }
 
         IDatabase _cacheDB;
 
-        public Cache(IDatabase cacheDB, CachePrefix prefix) : this(cacheDB, prefix.ToString())
+        public Cache(IDatabase cacheDB, CacheTag tag)
         {
-        }
-
-        public Cache(IDatabase cacheDB, string prefix) 
-        {
+            Type type = typeof(T);
+            var typename = type.FullName ?? type.Name;
+            var prefix = $"{_storageName}:{typename}:{tag}";
             _cacheDB = cacheDB;
             _prefix = prefix;
-        }
-
-        public Cache(IDatabase cacheDB)
-        {
-            _cacheDB = cacheDB;
-            var type = typeof(T);
-            _prefix = type.FullName ?? type.Name;
         }
 
         public async Task<T> Get(string id)

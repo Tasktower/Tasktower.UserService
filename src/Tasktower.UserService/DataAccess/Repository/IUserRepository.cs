@@ -6,7 +6,7 @@ using Tasktower.UserService.Domain;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IRepository<User, Guid>
     {
         Task UpdateUserDataById(Guid id, string name);
         Task UpdateRolesById(Guid id, string[] roles);

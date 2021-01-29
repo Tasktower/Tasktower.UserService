@@ -11,33 +11,11 @@ namespace Tasktower.UserService.DataAccess
     {
         IUserRepository UserRepo { get;  }
 
-        ICache<string> PwdResetTokenCache => NewCache<string>(CachePrefix.PASSWORD_RESET_TOKEN);
-        ICache<string> RefreshTokenCache => NewCache<string>(CachePrefix.REFRESH_TOKEN);
-        ICache<string> EmailVerifyTokenCache => NewCache<string>(CachePrefix.EMAIL_VERIFY_TOKEN);
-
-        ICache<T> NewCache<T>(CachePrefix prefix);
-        ICache<T> NewCache<T>(string prefix = "")
-        {
-            Type type = typeof(T);
-            var typename = type.FullName ?? type.Name;
-            var fullprefix = $"{typename}_{prefix}";
-
-            if (Enum.IsDefined(typeof(CachePrefix), fullprefix))
-            {
-                throw new ArgumentException("Prefix already used");
-            }
-            return NewRawCache<T>(fullprefix);
-        }
-
-        /// <summary>
-        /// Creates a new cache with any prefix name.
-        /// This method is only intended to help other methods
-        /// and should generally not be used.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="prefix"></param>
-        /// <returns></returns>
-        ICache<T> NewRawCache<T>(string prefix);
+        ICache<string> PwdResetTokenCache => NewCache<string>(CacheTag.PASSWORD_RESET_TOKEN);
+        ICache<string> RefreshTokenCache => NewCache<string>(CacheTag.REFRESH_TOKEN);
+        ICache<string> EmailVerifyTokenCache => NewCache<string>(CacheTag.EMAIL_VERIFY_TOKEN);
+        ICache<Domain.User> UserCache => NewCache<Domain.User>(CacheTag.USER);
+        ICache<T> NewCache<T>(CacheTag tag);
 
         void Complete();
         Task CompleteAsync();

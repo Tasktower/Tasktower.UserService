@@ -12,33 +12,21 @@ namespace Tasktower.UserService.DataAccess
     {
         private EntityFrameworkDBContext _efDbContext;
         private StackExchange.Redis.IDatabase _cacheDB;
-        private StackExchange.Redis.IDatabase _keyvaultDB;
 
         public IUserRepository UserRepo { get; private set; }
 
-        public ICache<T> NewCache<T>(CachePrefix prefix)
+        public ICache<T> NewCache<T>(CacheTag tag)
         {
-            return new Cache<T>(_cacheDB, prefix);
-        }
-
-        public ICache<T> NewRawCache<T>(string prefix)
-        {
-            return new Cache<T>(_cacheDB, prefix);
+            return new Cache<T>(_cacheDB, tag);
         }
 
         public UnitOfWork(EntityFrameworkDBContext dbContext, 
-            StackExchange.Redis.IDatabase cacheDB,
-            StackExchange.Redis.IDatabase keyvaultDB)
+            StackExchange.Redis.IDatabase cacheDB)
         {
             _efDbContext = dbContext;
             _cacheDB = cacheDB;
-            _keyvaultDB = keyvaultDB;
             if (_efDbContext != null) {
                 UserRepo = new UserRepository(_efDbContext.UserItems);
-            }
-            if (_keyvaultDB != null)
-            {
-                // init keyvault
             }
         }
 

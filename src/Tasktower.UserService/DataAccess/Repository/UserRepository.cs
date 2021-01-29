@@ -7,7 +7,7 @@ using Tasktower.UserService.Domain;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {
-    public class UserRepository : RepositoryBase<User>, IUserRepository
+    public class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     {
         public UserRepository(DbSet<User> context) : base(context) { } 
 
