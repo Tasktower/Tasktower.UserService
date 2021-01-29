@@ -10,6 +10,7 @@ namespace Tasktower.UserService.DataAccess.Cache
         PASSWORD_RESET_TOKEN,
         REFRESH_TOKEN,
         EMAIL_VERIFY_TOKEN,
+        AUTHJWT_PUBLIC_RSA_PEMKEY,
         USER
     }
 }
