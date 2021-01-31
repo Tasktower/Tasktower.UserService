@@ -4,12 +4,14 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using CryptSharp.Utility;
+using Tasktower.UserService.Utils.DependencyInjection;
 
-namespace Tasktower.UserService.BLL
+namespace Tasktower.UserService.BusinessService
 {
-    public class CryptoBLL : ICryptoBLL
+    [BusinessService]
+    public class CryptoService : ICryptoService
     {
-        public CryptoBLL() { }
+        public CryptoService() { }
 
         public byte[] GeneratePasswordSalt()
         {

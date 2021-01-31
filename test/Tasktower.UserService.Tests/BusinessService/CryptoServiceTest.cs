@@ -4,16 +4,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tasktower.UserService.BLL;
+using Tasktower.UserService.BusinessService;
 using Xunit;
 
-namespace Tasktower.UserService.Tests.BLL
+namespace Tasktower.UserService.Tests.BusinessService
 {
-    public class CryptoBLLTest : IDisposable
+    public class CryptoServiceTest : IDisposable
     {
-        private readonly ICryptoBLL _cryptoBLL;
-        public CryptoBLLTest() {
-            _cryptoBLL = new CryptoBLL();
+        private readonly ICryptoService _cryptoBLL;
+        public CryptoServiceTest() {
+            _cryptoBLL = new CryptoService();
         }
         public void Dispose()
         {

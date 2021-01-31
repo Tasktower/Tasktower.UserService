@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Errors.ErrorHandling;
+using Tasktower.UserService.Utils.DependencyInjection;
 
 namespace Tasktower.UserService
 {
@@ -41,8 +42,8 @@ namespace Tasktower.UserService
                 options.CacheConnectionString = Configuration.GetConnectionString("redisMemStoreConn");
             });
 
-            // Business Logic Layers
-            services.AddScoped<BLL.ICryptoBLL, BLL.CryptoBLL>();
+            // Business services
+            services.AddBusinessServices();
 
             // Routing services
             services.AddCors();

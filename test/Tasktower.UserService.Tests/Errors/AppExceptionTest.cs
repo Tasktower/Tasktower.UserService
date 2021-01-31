@@ -16,7 +16,7 @@ namespace Tasktower.UserService.Tests.Errors
         public void CreateAppException_BadRequestMatches_WhenBadRequestImputted()
         {
             var appException = APIException.Create(APIException.Code.BAD_REQUEST);
-            Assert.Equal(500, appException.StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, appException.StatusCode);
             Assert.Equal(APIException.Code.BAD_REQUEST, appException.ErrorCode);
         }
     }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Tasktower.UserService.BLL
+namespace Tasktower.UserService.BusinessService
 {
-    public interface ICryptoBLL
+    public interface ICryptoService
     {
         byte[] GeneratePasswordSalt();
         byte[] PasswordHash(string password, byte[] passwordSalt);

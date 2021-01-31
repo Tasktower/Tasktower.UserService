@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Tasktower.UserService.BusinessService;
 using Tasktower.UserService.Domain;
 using Tasktower.UserService.Errors;
 
@@ -17,10 +19,12 @@ namespace Tasktower.UserService.Controllers
     public class UserTestController : ControllerBase
     {
         private readonly DataAccess.IUnitOfWork _unitOfWork;
+        private readonly ICryptoService _cryptoBLL;
 
-        public UserTestController(DataAccess.IUnitOfWork unitOfWork)
+        public UserTestController(DataAccess.IUnitOfWork unitOfWork, ICryptoService cryptoBLL)
         {
             _unitOfWork = unitOfWork;
+            _cryptoBLL = cryptoBLL;
         }
 
         // GET: api/<UserTestController>
@@ -60,6 +64,14 @@ namespace Tasktower.UserService.Controllers
         public void ThrowErr()
         {
             throw new ApplicationException("handle this");
+        }
+
+        [HttpGet("/hash/{pwd}")]
+        public object Hash(string pwd)
+        {
+            var salt = _cryptoBLL.GeneratePasswordSalt();
+            var hash = _cryptoBLL.PasswordHash(pwd, salt);
+            return new { hash = Convert.ToBase64String(hash), salt };
         }
 
         // POST api/<UserTestController>
