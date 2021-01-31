@@ -9,7 +9,7 @@ namespace Tasktower.UserService.DataAccess
 {
     public interface IUnitOfWork : IDisposable
     {
-        IUserRepository UserRepo { get;  }
+        IUserRepository UserRepo { get; }
 
         ICache<string> PwdResetTokenCache => NewCache<string>(CacheTag.PASSWORD_RESET_TOKEN);
         ICache<string> RefreshTokenCache => NewCache<string>(CacheTag.REFRESH_TOKEN);
@@ -30,11 +30,7 @@ namespace Tasktower.UserService.DataAccess
         /// <returns></returns>
         ICache<T> NewCache<T>(CacheTag tag);
 
-        void Complete();
-        Task CompleteAsync();
-
-        void Rollback();
-
-        Task RollbackAsync();
+        void SaveChanges();
+        Task SaveChangesAsync();
     }
 }

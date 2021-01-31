@@ -43,7 +43,7 @@ namespace Tasktower.UserService.DataAccess.Repository
             {
                 return;
             }
-            user.RolesList = roles;
+            user.Roles = roles;
             _dbContext.Update(user);
             await task;
         }

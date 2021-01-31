@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tasktower.UserService.Domain;
+using Tasktower.UserService.Errors;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,11 +16,11 @@ namespace Tasktower.UserService.Controllers
     [ApiController]
     public class UserTestController : ControllerBase
     {
-        private readonly DataAccess.IUnitOfWorkFactory _unitOfWorkFactory;
+        private readonly DataAccess.IUnitOfWork _unitOfWork;
 
-        public UserTestController(DataAccess.IUnitOfWorkFactory unitOfWorkFactory)
+        public UserTestController(DataAccess.IUnitOfWork unitOfWork)
         {
-            _unitOfWorkFactory = unitOfWorkFactory;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/<UserTestController>
@@ -27,37 +28,38 @@ namespace Tasktower.UserService.Controllers
         public async Task<IEnumerable<User>> Get()
         {
             IEnumerable<User> user;
-            using var uow = _unitOfWorkFactory.Create();
-            
-            user = await uow.UserRepo.GetAll();
+            user = await _unitOfWork.UserRepo.GetAll();
             return user;
         }
 
         // GET api/<UserTestController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> Get(string id)
+        public async Task<User> Get(string id)
         {
             User user;
             if (!Guid.TryParse(id, out Guid uuid))
             {
-                return NotFound();
+                throw APIException.Create(APIException.Code.ACCOUNT_NOT_FOUND);
             }
-
-            using var uow = _unitOfWorkFactory.Create();
-           
-            var userCache = uow.UserCache;
+            
+            var userCache = _unitOfWork.UserCache;
 
             user = await userCache.Get(uuid.ToString());
             if (user == null) {
-                user = await uow.UserRepo.GetById(uuid);
+                user = await _unitOfWork.UserRepo.GetById(uuid);
                 if (user == null)
                 {
-                    return NotFound();
+                    throw APIException.Create(APIException.Code.ACCOUNT_NOT_FOUND);
                 }
                 _ = userCache.SetIfNotExists(uuid.ToString(), user, TimeSpan.FromSeconds(60));
             }
 
             return user;
+        }
+        [HttpGet("err")]
+        public void ThrowErr()
+        {
+            throw new ApplicationException("handle this");
         }
 
         // POST api/<UserTestController>

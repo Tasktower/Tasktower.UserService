@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Tasktower.UserService.DataAccess.DataStoreAccessors;
+using Tasktower.UserService.DataAccess.DBAccessor;
 using Tasktower.UserService.DataAccess.Cache;
 using Tasktower.UserService.DataAccess.Repository;
+using StackExchange.Redis;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
 
 namespace Tasktower.UserService.DataAccess
 {
@@ -20,17 +23,14 @@ namespace Tasktower.UserService.DataAccess
             return new Cache<T>(_cacheDB, tag);
         }
 
-        public UnitOfWork(EntityFrameworkDBContext dbContext, 
-            StackExchange.Redis.IDatabase cacheDB)
+        public UnitOfWork(IOptions<UnitOfWorkOptions> options)
         {
-            _efDbContext = dbContext;
-            _cacheDB = cacheDB;
-            if (_efDbContext != null) {
-                UserRepo = new UserRepository(_efDbContext.UserItems);
-            }
+            _efDbContext = new EntityFrameworkDBContext(options.Value.DBContextOptions);
+            _cacheDB = ConnectionMultiplexer.Connect(options.Value.CacheConnectionString).GetDatabase();
+            UserRepo = new UserRepository(_efDbContext.UserItems);
         }
 
-        public void Complete()
+        public void SaveChanges()
         {
             if (_efDbContext != null)
             {
@@ -38,28 +38,11 @@ namespace Tasktower.UserService.DataAccess
             }
         }
 
-        public async Task CompleteAsync()
+        public async Task SaveChangesAsync()
         {
             if (_efDbContext != null)
             {
                 await _efDbContext.SaveChangesAsync();
-            }
-        }
-        public async Task RollbackAsync()
-        {
-            if (_efDbContext != null )
-            {
-               await _efDbContext.DisposeAsync();
-                _efDbContext = null;
-            }
-        }
-
-        public void Rollback()
-        {
-            if (_efDbContext != null)
-            {
-                _efDbContext.Dispose();
-                _efDbContext = null;
             }
         }
 
@@ -68,7 +51,7 @@ namespace Tasktower.UserService.DataAccess
         {
             if (_efDbContext != null)
             {
-                _efDbContext.Dispose();
+                _efDbContext.DisposeAsync();
                 _efDbContext = null;
 
             }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Tasktower.UserService.Dtos.Errors;
 
 namespace Tasktower.UserService.Errors
 {
@@ -19,35 +19,22 @@ namespace Tasktower.UserService.Errors
         {
             return code switch
             {
-                Code.ACCOUNT_NOT_FOUND => new APIException(code, 400, "Account not found", args),
-                Code.ACCOUNT_FAILED_TO_CREATE => new APIException(code, 400, "Account failed to create", args),
-                Code.BAD_REQUEST => new APIException(code, 500, "Bad Request, Something went wrong", args),
-                _ => new APIException(Code.BAD_REQUEST, 500, "Bad Request, Something went wrong", args),
+                Code.ACCOUNT_NOT_FOUND => new APIException(code, HttpStatusCode.BadRequest, "Account not found", args),
+                Code.ACCOUNT_FAILED_TO_CREATE => new APIException(code, HttpStatusCode.BadRequest, "Account failed to create", args),
+                Code.BAD_REQUEST => new APIException(code, HttpStatusCode.InternalServerError, "Bad Request, Something went wrong", args),
+                _ => new APIException(Code.BAD_REQUEST, HttpStatusCode.InternalServerError, "Bad Request, Something went wrong", args),
             };
         }
 
-        private APIException(Code code,
-            int statusCode,
-            string messageFormat,
-            params string[] args) : base(string.Format(messageFormat, args))
+        private APIException(Code code, HttpStatusCode statusCode, string messageFormat, params string[] args) 
+            : base(string.Format(messageFormat, args))
         {
             ErrorCode = code;
             StatusCode = statusCode;
         }
 
-        public int StatusCode { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
 
         public Code ErrorCode { get; set; }
-
-        public APIErrorDto Payload { get 
-            {
-                return new APIErrorDto
-                {
-                    Message = Message,
-                    StatusCode = StatusCode,
-                    ErrorCode = ErrorCode,
-                };
-            }  
-        }
     }
 }

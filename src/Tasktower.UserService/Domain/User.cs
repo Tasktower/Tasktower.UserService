@@ -28,16 +28,16 @@ namespace Tasktower.UserService.Domain
         [JsonIgnore]
         [Required]
         [Column("roles")]
-        public string Roles { get; set; }
+        public string RolesString { get; set; }
         [Column("password_salt")]
         public byte[] PasswordSalt { get; set; }
         [Column("password_hash")]
         public byte[] PasswordHash { get; set; }
 
         [NotMapped]
-        public string[] RolesList { 
-            get { return RolesToRolesList(Roles); } 
-            set { Roles = RolesListToRoles(value);  } 
+        public string[] Roles { 
+            get { return RolesToRolesList(RolesString); } 
+            set { RolesString = RolesListToRoles(value);  } 
         }
 
         public static string RolesListToRoles(string[] rolesList)
