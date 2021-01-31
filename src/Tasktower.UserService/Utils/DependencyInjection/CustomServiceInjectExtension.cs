@@ -19,5 +19,16 @@ namespace Tasktower.UserService.Utils.DependencyInjection
             }
             return services;
         }
+
+        public static IServiceCollection AddBusinessRules(this IServiceCollection services)
+        {
+            var types = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.GetCustomAttribute<BusinessRulesAttribute>() is not null);
+            foreach (Type t in types)
+            {
+                services.AddScoped(t.GetInterface($"I{t.Name}"), t);
+            }
+            return services;
+        }
     }
 }

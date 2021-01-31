@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tasktower.UserService.Dtos
 {
-    public class AccountRegisterDto
+    public class UserRegisterDto
     {
         [MaxLength(100)]
         [MinLength(3)]
@@ -15,6 +15,7 @@ namespace Tasktower.UserService.Dtos
 
         [MaxLength(320)]
         [MinLength(3)]
+        [EmailAddress]
         [Required]
         public string Email { get; set; }
 

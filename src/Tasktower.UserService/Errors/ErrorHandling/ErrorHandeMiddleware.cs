@@ -41,12 +41,15 @@ namespace Tasktower.UserService.Errors.ErrorHandling
             APIException.Code? errorCode = null;
             string message;
             HttpStatusCode statusCode = HttpStatusCode.InternalServerError; // 500 if unexpected
+            IEnumerable<object> multipleErrors = null;
 
             // Specify different custom exceptions here
             if (ex is APIException apiEx) {
                 statusCode = apiEx.StatusCode;
                 errorCode = apiEx.ErrorCode;
                 message = apiEx.Message;
+                multipleErrors = apiEx.MultipleErrors?
+                    .Select(x => new { error = x.Message, code = x.ErrorCode });
             } else
             {
                 message = _options.ShowAllErrorMessages ? ex.Message : "Internal server error";
@@ -56,7 +59,8 @@ namespace Tasktower.UserService.Errors.ErrorHandling
                 stackTrace = _options.UseStackTrace?
                     ex.StackTrace.Split(Environment.NewLine).Select(x => x.Trim())
                     : null,
-                errorCode = errorCode?.ToString()
+                errorCode = errorCode?.ToString(),
+                multipleErrors = multipleErrors,
             }, Utils.JsonSerializerUtils.CustomSerializerOptions());;
 
             if (_options.UseStackTrace)

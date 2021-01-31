@@ -42,6 +42,9 @@ namespace Tasktower.UserService
                 options.CacheConnectionString = Configuration.GetConnectionString("redisMemStoreConn");
             });
 
+            // Business rules
+            services.AddBusinessRules();
+
             // Business services
             services.AddBusinessServices();
 
