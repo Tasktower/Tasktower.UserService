@@ -35,7 +35,7 @@ namespace Tasktower.UserService.DataAccess.Repository
             await task;
         }
 
-        public async Task UpdateRolesById(Guid id, string[] roles)
+        public async Task UpdateRolesById(Guid id, Security.Role[] roles)
         {
             var task = Task.Delay(1);
             var user = await _dbContext.FindAsync(id);

@@ -25,7 +25,7 @@ namespace Tasktower.UserService.Tests.BusinessService
         {
             byte[] salt1 = _cryptoBLL.GeneratePasswordSalt();
             byte[] salt2 = _cryptoBLL.GeneratePasswordSalt();
-            Assert.False(Enumerable.SequenceEqual(salt1, salt2));
+            Assert.NotEqual(salt1, salt2);
         }
 
         [Fact]

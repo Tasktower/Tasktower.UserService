@@ -59,7 +59,7 @@ namespace Tasktower.UserService.Errors.ErrorHandling
                 stackTrace = _options.UseStackTrace?
                     ex.StackTrace.Split(Environment.NewLine).Select(x => x.Trim())
                     : null,
-                errorCode = errorCode?.ToString(),
+                errorCode = errorCode,
                 multipleErrors = multipleErrors,
             }, Utils.JsonSerializerUtils.CustomSerializerOptions());;
 

@@ -30,7 +30,6 @@ namespace Tasktower.UserService.Tests.BusinessRules
                 Name = "Gordon Ramswey",
                 Email = "gordon@email.com",
                 EmailVerified = true,
-                Roles = new string[] {"SUPERUSER"},
                 UpdatedAt = DateTime.Now,
                 CreatedAt = DateTime.Now
             });
@@ -40,7 +39,6 @@ namespace Tasktower.UserService.Tests.BusinessRules
                 Name = "Guy Fieri",
                 Email = "guy@email.com",
                 EmailVerified = true,
-                Roles = new string[] { "SUPERUSER" },
                 UpdatedAt = DateTime.Now,
                 CreatedAt = DateTime.Now
             });
@@ -58,7 +56,7 @@ namespace Tasktower.UserService.Tests.BusinessRules
         }
 
         [Fact]
-        public async Task validate_multipleExceptionsEmailNotFound_whenGordonRamseyMakesExistingAccount()
+        public async Task Validate_multipleExceptionsEmailNotFound_whenGordonRamseyMakesExistingAccount()
         {
             var apiEx = await Assert.ThrowsAsync<APIException>(async () => { 
                 await _userRegisterBR.Validate(new Dtos.UserRegisterDto { 
@@ -73,7 +71,7 @@ namespace Tasktower.UserService.Tests.BusinessRules
         }
 
         [Fact]
-        public async Task validate_valid_whenKeauReavesMakesAccount()
+        public async Task Validate_valid_whenKeauReavesMakesAccount()
         {
             await _userRegisterBR.Validate(new Dtos.UserRegisterDto
                 {

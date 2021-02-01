@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Tasktower.UserService.Tests.Errors
 {
-    public class AppExceptionTest
+    public class ApiExceptionTest
     {
         [Fact]
         public void CreateAppException_BadRequestMatches_WhenBadRequestImputted()

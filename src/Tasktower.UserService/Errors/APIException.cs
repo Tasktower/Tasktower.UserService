@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Tasktower.UserService.Errors
 {
     public class APIException : Exception
     {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum Code
         {
             INTERNAL_SERVER_ERROR,

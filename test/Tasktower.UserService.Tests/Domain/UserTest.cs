@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tasktower.UserService.Domain;
+using Tasktower.UserService.Security;
 using Xunit;
 
 namespace Tasktower.UserService.Tests.Domain
 {
     public class UserTest
     {
+
         [Fact]
         public void CreateUser_CorrectUserCreated_WithGeneratedFields() {
             // ARRANGE
@@ -29,7 +31,7 @@ namespace Tasktower.UserService.Tests.Domain
                 Name = "Super User",
                 Email = "superuser@example.com",
                 EmailVerified = true,
-                RolesString = "SUPERUSER",
+                Roles = new Role[]{ Role.SUPERUSER },
                 PasswordSalt = passwordSalt,
                 PasswordHash = passwordHash
             };
@@ -41,7 +43,7 @@ namespace Tasktower.UserService.Tests.Domain
             Assert.Equal("Super User", user.Name);
             Assert.Equal("superuser@example.com", user.Email);
             Assert.True(user.EmailVerified);
-            Assert.Equal("SUPERUSER", user.RolesString);
+            Assert.Equal(new Role[] { Role.SUPERUSER }, user.Roles);
             Assert.Equal(passwordHash, user.PasswordHash);
             Assert.Equal(passwordSalt, user.PasswordSalt);
         }

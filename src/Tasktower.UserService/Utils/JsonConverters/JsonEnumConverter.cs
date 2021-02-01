@@ -17,7 +17,7 @@ namespace Tasktower.UserService.Utils.JsonConverters
             }
             catch (Exception)
             {
-                throw new NotSupportedException("Not an app error code");
+                throw new NotSupportedException($"Not a {typeof(T).Name}");
             }
 
         }

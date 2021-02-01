@@ -9,7 +9,7 @@ namespace Tasktower.UserService.DataAccess.Repository
     public interface IUserRepository : IRepository<User, Guid>
     {
         Task UpdateUserDataById(Guid id, string name);
-        Task UpdateRolesById(Guid id, string[] roles);
+        Task UpdateRolesById(Guid id, Security.Role[] roles);
         Task UpdatePasswordSaltAndPasswordHashByID(Guid id, byte[] passwordHash, byte[] passwordSalt);
         Task<User> GetByEmail(string email);
 
