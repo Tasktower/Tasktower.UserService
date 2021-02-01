@@ -39,7 +39,7 @@ namespace Tasktower.UserService.BusinessService
             {
                 throw APIException.Create(APIException.Code.ACCOUNT_NOT_FOUND);
             }
-            return user.Adapt<UserReadDto>();
+            return UserReadDto.FromUser(user);
         }
 
         public async Task<UserReadDto> RegisterUser(UserRegisterDto userRegisterDto, bool emailVerified=false)
@@ -60,11 +60,14 @@ namespace Tasktower.UserService.BusinessService
             await _unitOfWork.UserRepo.Add(user);
             await _unitOfWork.SaveChangesAsync();
 
+            var createdUserTask = _unitOfWork.UserRepo.GetByEmail(user.Email);
+
             if (!emailVerified)
             {
                 _logger.LogInformation("Sending email verify link");
             }
-            return user.Adapt<UserReadDto>();
+            var createdUser = await createdUserTask;
+            return UserReadDto.FromUser(createdUser);
         }
     }
 }
