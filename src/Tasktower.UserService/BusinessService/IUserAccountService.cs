@@ -9,6 +9,7 @@ namespace Tasktower.UserService.BusinessService
 {
     public interface IUserAccountService
     {
-        Task RegisterUser(UserRegisterDto userRegisterDto, bool emailVerified = false);
+        Task<UserReadDto> RegisterUser(UserRegisterDto userRegisterDto, bool emailVerified = false);
+        Task<UserReadDto> GetUserByID(Guid id);
     }
 }

@@ -8,6 +8,8 @@ using Tasktower.UserService.Utils.DependencyInjection;
 using Tasktower.UserService.BusinessRules;
 using Tasktower.UserService.Domain;
 using Microsoft.Extensions.Logging;
+using Tasktower.UserService.Errors;
+using Mapster;
 
 namespace Tasktower.UserService.BusinessService
 {
@@ -30,7 +32,17 @@ namespace Tasktower.UserService.BusinessService
             _logger = logger;
         }
 
-        public async Task RegisterUser(UserRegisterDto userRegisterDto, bool emailVerified=false)
+        public async Task<UserReadDto> GetUserByID(Guid id)
+        {
+            var user = await _unitOfWork.UserRepo.GetById(id);
+            if (user == null)
+            {
+                throw APIException.Create(APIException.Code.ACCOUNT_NOT_FOUND);
+            }
+            return user.Adapt<UserReadDto>();
+        }
+
+        public async Task<UserReadDto> RegisterUser(UserRegisterDto userRegisterDto, bool emailVerified=false)
         {
             await _userRegisterBR.Validate(userRegisterDto);
             var passwordSalt = _cryptoService.GeneratePasswordSalt();
@@ -52,6 +64,7 @@ namespace Tasktower.UserService.BusinessService
             {
                 _logger.LogInformation("Sending email verify link");
             }
+            return user.Adapt<UserReadDto>();
         }
     }
 }

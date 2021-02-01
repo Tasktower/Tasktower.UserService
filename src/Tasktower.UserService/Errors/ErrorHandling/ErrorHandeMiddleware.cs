@@ -57,10 +57,8 @@ namespace Tasktower.UserService.Errors.ErrorHandling
             string result = JsonSerializer.Serialize(new { 
                 error = message,
                 stackTrace = _options.UseStackTrace?
-                    ex.StackTrace.Split(Environment.NewLine).Select(x => x.Trim())
-                    : null,
-                errorCode = errorCode,
-                multipleErrors = multipleErrors,
+                    ex.StackTrace.Split(Environment.NewLine).Select(x => x.Trim()): null,
+                errorCode, multipleErrors, status = statusCode
             }, Utils.JsonSerializerUtils.CustomSerializerOptions());;
 
             if (_options.UseStackTrace)

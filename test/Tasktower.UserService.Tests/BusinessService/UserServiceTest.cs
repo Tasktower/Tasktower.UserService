@@ -25,7 +25,7 @@ namespace Tasktower.UserService.Tests.BusinessService
         public UserServiceTest()
         {
             _unitOfWork = new MockUnitOfWork(GetType().FullName ?? GetType().Name);
-            var logger = new NullLogger<UserService.BusinessService.UserAccountService>();
+            var logger = new NullLogger<UserAccountService>();
             var userRegisterBR = new UserRegisterBR(_unitOfWork);
             _cryptoService = new CryptoService();
             _userService = new UserAccountService(_unitOfWork, userRegisterBR, _cryptoService, logger);
