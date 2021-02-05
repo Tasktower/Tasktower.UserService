@@ -1,60 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Tasktower.UserService.DataAccess.DBAccessor;
 using Tasktower.UserService.DataAccess.Cache;
 using Tasktower.UserService.DataAccess.Repository;
 using StackExchange.Redis;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 
 namespace Tasktower.UserService.DataAccess
 {
-    public class UnitOfWork : IUnitOfWork
+    public sealed class UnitOfWork : IUnitOfWork
     {
         private EntityFrameworkDBContext _efDbContext;
-        private StackExchange.Redis.IDatabase _cacheDB;
+        private IConnectionMultiplexer _localCacheMuxer;
+        private IConnectionMultiplexer _sharedCacheMuxer;
 
         public IUserRepository UserRepo { get; private set; }
 
-        public ICache<T> NewCache<T>(CacheTag tag)
+        public ICache<T> NewCache<T>(CacheTag tag, bool shared=false)
         {
-            return new Cache<T>(_cacheDB, tag);
+            var muxer = shared ? _sharedCacheMuxer : _localCacheMuxer;
+            return new Cache<T>(muxer?.GetDatabase(), tag);
         }
 
         public UnitOfWork(IOptions<UnitOfWorkOptions> options)
         {
             _efDbContext = new EntityFrameworkDBContext(options.Value.DBContextOptions);
-            _cacheDB = ConnectionMultiplexer.Connect(options.Value.CacheConnectionString).GetDatabase();
+            _localCacheMuxer = ConnectionMultiplexer.Connect(options.Value.LocalCacheConnectionString);
+            _sharedCacheMuxer = ConnectionMultiplexer.Connect(options.Value.SharedCacheConnectionString);
             UserRepo = new UserRepository(_efDbContext.UserItems);
         }
 
         public void SaveChanges()
         {
-            if (_efDbContext != null)
-            {
-                _efDbContext.SaveChanges();
-            }
+            _efDbContext?.SaveChanges();
         }
 
         public async Task SaveChangesAsync()
         {
-            if (_efDbContext != null)
-            {
-                await _efDbContext.SaveChangesAsync();
-            }
+            await _efDbContext?.SaveChangesAsync();
         }
 
 
         public void Dispose()
         {
-            if (_efDbContext != null)
-            {
-                _efDbContext.DisposeAsync();
-                _efDbContext = null;
-
-            }
+            _efDbContext?.Dispose();
+            _efDbContext = null;
+            _localCacheMuxer?.Dispose();
+            _localCacheMuxer = null;
+            _sharedCacheMuxer?.Dispose();
+            _sharedCacheMuxer = null;
         }
     }
 }

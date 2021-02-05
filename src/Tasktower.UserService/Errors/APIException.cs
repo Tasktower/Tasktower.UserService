@@ -14,9 +14,12 @@ namespace Tasktower.UserService.Errors
         {
             INTERNAL_SERVER_ERROR,
             ACCOUNT_NOT_FOUND,
+            ACCOUNT_NOT_REGISTERED_STANDARD,
             ACCOUNT_FAILED_TO_CREATE,
             ACCOUNT_ALREADY_EXISTS,
-            MULTIPLE_EXCEPTIONS_FOUND
+            MULTIPLE_EXCEPTIONS_FOUND,
+            UNAUTHORIZED,
+            FORBIDDEN
         }
 
         public static APIException CreateFromMultiple(IEnumerable<APIException> multipleExceptions)
@@ -34,6 +37,8 @@ namespace Tasktower.UserService.Errors
                 Code.ACCOUNT_NOT_FOUND => new APIException(code, HttpStatusCode.BadRequest, "Account not found", args),
                 Code.ACCOUNT_FAILED_TO_CREATE => new APIException(code, HttpStatusCode.BadRequest, "Account failed to create", args),
                 Code.MULTIPLE_EXCEPTIONS_FOUND => new APIException(code, HttpStatusCode.BadRequest, "Multiple exceptions found", args),
+                Code.UNAUTHORIZED => new APIException(code, HttpStatusCode.Unauthorized, "Unauthorized", args),
+                Code.FORBIDDEN => new APIException(code, HttpStatusCode.Forbidden, "Forbidden", args),
                 Code.INTERNAL_SERVER_ERROR => new APIException(code, HttpStatusCode.InternalServerError, "Something went wrong", args),
                 _ => new APIException(Code.INTERNAL_SERVER_ERROR, HttpStatusCode.InternalServerError, "Something went wrong", args),
             };

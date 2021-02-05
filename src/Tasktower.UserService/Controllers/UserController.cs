@@ -37,5 +37,22 @@ namespace Tasktower.UserService.Controllers
             var userReadDto = await _userAccountService.RegisterUser(dto);
             return CreatedAtAction(nameof(GetUserById), new { userReadDto.Id }, userReadDto);
         }
+
+        // POST api/<UserController>/signin/standard
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("/signin/standard")]
+        public async Task<ActionResult> SignIn([FromBody] UserStandardSignInDto dto)
+        {
+            var tokenDto = await _userAccountService.SignInStandard(dto);
+
+            HttpContext.Response.Cookies.Append("REFRESH-TOKEN", tokenDto.RefreshToken, 
+                new CookieOptions{HttpOnly = true, SameSite = SameSiteMode.Lax});
+            HttpContext.Response.Cookies.Append("ACCESS-TOKEN", tokenDto.AccessToken,
+                new CookieOptions { HttpOnly = true, SameSite = SameSiteMode.Lax });
+            HttpContext.Response.Cookies.Append("XSRF-TOKEN", tokenDto.XSRFToken,
+                new CookieOptions { HttpOnly = false, SameSite = SameSiteMode.Lax });
+            return Ok();
+        }
     }
 }

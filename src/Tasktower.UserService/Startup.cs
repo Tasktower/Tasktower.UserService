@@ -39,7 +39,8 @@ namespace Tasktower.UserService
                 options.DBContextOptions = new DbContextOptionsBuilder<DataAccess.DBAccessor.EntityFrameworkDBContext>()
                  .UseSqlServer(Configuration.GetConnectionString("mssqlconnection"))
                  .Options;
-                options.CacheConnectionString = Configuration.GetConnectionString("redisMemStoreConn");
+                options.LocalCacheConnectionString = Configuration.GetConnectionString("redisMemStoreConn");
+                options.SharedCacheConnectionString = Configuration.GetConnectionString("redisSharedMemStoreConn");
             });
 
             // Business rules

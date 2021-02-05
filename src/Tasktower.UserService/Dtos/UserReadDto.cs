@@ -17,13 +17,17 @@ namespace Tasktower.UserService.Dtos
 
         public string Email { get; set; }
 
-        public bool EmailVerified { get; set; }
+        public bool? EmailVerified { get; set; }
 
         public Role[] Roles { get; set; }
 
-        public static UserReadDto FromUser(User user)
+        public static UserReadDto FromUser(User user, bool ignoreSensitive = true)
         {
-            return user.Adapt<UserReadDto>();
+            var config = TypeAdapterConfig<User, UserReadDto>.NewConfig()
+                .IgnoreIf((u, d) => ignoreSensitive, 
+                    d => d.Roles, d => d.EmailVerified, d => d.CreatedAt, d => d.UpdatedAt)
+                .Config;
+            return user.Adapt<UserReadDto>(config);
         }
     }
 }

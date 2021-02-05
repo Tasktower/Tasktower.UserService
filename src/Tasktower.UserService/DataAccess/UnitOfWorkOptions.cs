@@ -10,7 +10,8 @@ namespace Tasktower.UserService.DataAccess
     public class UnitOfWorkOptions
     {
         public DbContextOptions<EntityFrameworkDBContext> DBContextOptions { get; set; }
-        public string CacheConnectionString { get; set; }
+        public string LocalCacheConnectionString { get; set; }
+        public string SharedCacheConnectionString { get; set; }
 
     }
 }

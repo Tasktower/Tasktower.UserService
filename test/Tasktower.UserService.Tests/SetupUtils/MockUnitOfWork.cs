@@ -14,18 +14,25 @@ namespace Tasktower.UserService.Tests.SetupUtils
     class MockUnitOfWork : IUnitOfWork
     {
         private Dictionary<string, (string, DateTime)> _cacheStore;
+        private Dictionary<string, (string, DateTime)> _sharedCacheStore;
         private EntityFrameworkDBContext _efDbContext;
 
         public IUserRepository UserRepo { get; private set; }
 
-        public ICache<T> NewCache<T>(CacheTag tag)
+        public ICache<T> NewLocalCache<T>(CacheTag tag)
         {
             return new MockCache<T>(_cacheStore, tag);
+        }
+
+        public ICache<T> NewCache<T>(CacheTag tag, bool shared = false)
+        {
+            return new MockCache<T>(_sharedCacheStore, tag);
         }
 
         public MockUnitOfWork(string dbname)
         {
             _cacheStore = new Dictionary<string, (string, DateTime)>();
+            _sharedCacheStore = new Dictionary<string, (string, DateTime)>();
             var optionsBuilder = new DbContextOptionsBuilder<EntityFrameworkDBContext>();
             optionsBuilder.UseInMemoryDatabase(dbname);
             _efDbContext = new EntityFrameworkDBContext(optionsBuilder.Options);
@@ -59,5 +66,6 @@ namespace Tasktower.UserService.Tests.SetupUtils
 
             }
         }
+
     }
 }

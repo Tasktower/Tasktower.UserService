@@ -9,8 +9,8 @@ namespace Tasktower.UserService.DataAccess
     public static class DataAccessExtensions
     {
         public static IServiceCollection AddUnitOfWork(
-        this IServiceCollection serviceCollection,
-        Action<UnitOfWorkOptions> options)
+            this IServiceCollection serviceCollection,
+            Action<UnitOfWorkOptions> options)
         {
             if (options == null)
             {
