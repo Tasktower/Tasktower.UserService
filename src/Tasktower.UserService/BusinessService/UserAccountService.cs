@@ -69,10 +69,9 @@ namespace Tasktower.UserService.BusinessService
         private async Task<string> CreateSaveRefreshToken(User user)
         {
             byte[] refreshTokenBytes = CryptoUtils.GenerateRandomBytes(64);
-            byte[] refreshTokenSaltBytes = CryptoUtils.GenerateRandomBytes(8);
             await _unitOfWork.RefreshTokenHashLocalCache.SetIfNotExists(
-                Convert.ToBase64String(CryptoUtils.CreateSHA256Hash(refreshTokenBytes, refreshTokenSaltBytes)),
-                new RefreshTokenData { RefreshTokenSaltBase64 = Convert.ToBase64String(refreshTokenSaltBytes), UserID = user.Id },
+                Convert.ToBase64String(CryptoUtils.CreateSHA256Hash(refreshTokenBytes)),
+                new RefreshTokenData { UserID = user.Id },
                 TimeSpan.FromDays(4));
             return Convert.ToBase64String(refreshTokenBytes);
         }

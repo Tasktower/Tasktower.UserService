@@ -22,16 +22,16 @@ namespace Tasktower.UserService.Security
             return bytes;
         }
 
-        public static byte[] CreateSHA256Hash(byte[] refreshTokenBytes, byte[] refreshTokenSalt)
+        public static byte[] CreateSHA256Hash(byte[] refreshTokenBytes, byte[] refreshTokenSalt = null)
         {
             using var sha = SHA256.Create();
-            return sha.ComputeHash(refreshTokenBytes.Concat(refreshTokenSalt).ToArray());
+            return sha.ComputeHash(refreshTokenBytes.Concat(refreshTokenSalt ?? Array.Empty<byte>()).ToArray());
         }
 
-        public static bool VerifySHA256(byte[] candidateRefreshTokenBytes, byte[] realRefreshTokenHash, byte[] refreshTokenSalt)
+        public static bool VerifySHA256(byte[] candidateRefreshTokenBytes, byte[] realRefreshTokenHash, byte[] refreshTokenSalt = null)
         {
             using var sha = SHA256.Create();
-            var candidateHash = sha.ComputeHash(candidateRefreshTokenBytes.Concat(refreshTokenSalt).ToArray());
+            var candidateHash = sha.ComputeHash(candidateRefreshTokenBytes.Concat(refreshTokenSalt ?? Array.Empty<byte>()).ToArray());
 
             return candidateHash.SequenceEqual(realRefreshTokenHash);
         }
