@@ -29,12 +29,12 @@ namespace Tasktower.UserService.Security.Auth.Middleware
             context.Items["XSRFToken"] = xsrfToken ?? "";
 
             if (accessToken != null)
-                await attachUserClaimsToContext(context, accessor, accessToken);
+                await AttachUserClaimsToContext(context, accessor, accessToken);
 
             await _next(context);
         }
 
-        private async Task attachUserClaimsToContext(HttpContext context, TKeyAccessor accessor, string token)
+        private async Task AttachUserClaimsToContext(HttpContext context, TKeyAccessor accessor, string token)
         {
             try
             {
