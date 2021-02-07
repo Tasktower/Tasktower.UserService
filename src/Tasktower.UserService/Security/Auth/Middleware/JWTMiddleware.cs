@@ -39,13 +39,13 @@ namespace Tasktower.UserService.Security.Auth.Middleware
             try
             {
                 var handler = new JwtSecurityTokenHandler();
-                string kid = handler.ReadJwtToken(token).Header.GetValueOrDefault("kid")?.ToString() ?? "";
+                string kid = handler.ReadJwtToken(token).Header.Kid ?? "";
                 string pem = await _options.KeyRetrieverAsync.Invoke(kid, accessor);
-
 
                 using RSACryptoServiceProvider rsa = CryptoUtils.RSAFromPublicPem(pem);
 
-                var rsaSecurityKey = new RsaSecurityKey(rsa) { KeyId = kid };
+
+                var rsaSecurityKey = new RsaSecurityKey(rsa.ExportParameters(false)) { KeyId = kid };
 
 
                 if (!CryptoUtils.TryParseAndValidateJWTToken(token, rsaSecurityKey, handler, out UserAuthData userData,
@@ -53,8 +53,9 @@ namespace Tasktower.UserService.Security.Auth.Middleware
                 {
                     return;
                 }
-
+   
                 context.Items["UserData"] = userData;
+                
             }
             catch
             {

@@ -27,7 +27,9 @@ namespace Tasktower.UserService.Controllers
         public async Task<UserReadDto> GetUserById(Guid id)
         {
             var userData = new AuthContext(HttpContext).UserAuthData;
-            return await _userAccountService.GetUserByID(id, userData == null || !userData.UserID.Equals(id));
+            var adminRoles = RoleGroups.AdminRoles();
+            bool notAdmin = !userData.Roles.Any(r => adminRoles.Contains(r));
+            return await _userAccountService.GetUserByID(id, userData == null || (notAdmin && !userData.UserID.Equals(id)));
         }
 
         // GET api/<UserController>/userinfo

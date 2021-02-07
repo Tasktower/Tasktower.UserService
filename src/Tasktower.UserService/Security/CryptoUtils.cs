@@ -104,7 +104,6 @@ namespace Tasktower.UserService.Security
                 ValidAudience = SecurityConstants.JwtAudience,
                 IssuerSigningKey = key,
             };
-
             try
             {
                 handler.ValidateToken(token, validationParameters, out SecurityToken validatedSecurityToken);

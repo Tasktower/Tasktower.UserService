@@ -18,6 +18,7 @@ namespace Tasktower.UserService.Security.Auth.AuthData
         {
             return new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(issuedAt).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(nameof(UserID), UserID.ToString()),
                 new Claim(nameof(Roles), string.Join(",", Roles)),
                 new Claim(nameof(EmailVerified), EmailVerified.ToString(), ClaimValueTypes.Boolean),
