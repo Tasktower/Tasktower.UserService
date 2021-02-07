@@ -5,20 +5,20 @@ using System.Threading.Tasks;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Dtos;
 using Tasktower.UserService.Utils.DependencyInjection;
-using Tasktower.UserService.BusinessRules;
 using Tasktower.UserService.Domain;
 using Microsoft.Extensions.Logging;
 using Tasktower.UserService.Errors;
 using Mapster;
-using Tasktower.UserService.Security.AuthData;
+using Tasktower.UserService.Security.Auth.AuthData;
 using Tasktower.UserService.Domain.CacheOnly;
 using Tasktower.UserService.Security;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
+using Tasktower.UserService.BusinessService.BusinessRules;
 
 namespace Tasktower.UserService.BusinessService
 {
-    [BusinessService]
+    [ScopedService]
     public class UserAccountService : IUserAccountService
     {
         private readonly ILogger<UserAccountService> _logger;
@@ -82,25 +82,22 @@ namespace Tasktower.UserService.BusinessService
             DateTime now = DateTime.Now;
             var kid = Guid.NewGuid().ToString();
             using RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(4096);
-            Task savePubKeySharedTask = _unitOfWork.AuthRSAPemPubKeySharedCache.SetIfNotExists(kid, CryptoUtils.CreateRSAPublicPem(rsa));
+            Task savePubKeySharedTask = _unitOfWork.AuthRSAPemPubKeySharedCache.SetIfNotExists(kid, 
+                CryptoUtils.CreateRSAPublicPem(rsa), TimeSpan.FromMinutes(70));
 
-            var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa) { KeyId = kid },
-                SecurityAlgorithms.RsaSha256)
+            var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa) { KeyId = kid}, SecurityAlgorithms.RsaSha256)
             {
-                CryptoProviderFactory = new CryptoProviderFactory
-                {
-                    CacheSignatureProviders = false,
-                },
+                CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
             };
 
-            UserJWTClaims claims = new UserJWTClaims
+            UserAuthData claims = new UserAuthData
             {
                 EmailVerified = user.EmailVerified,
                 Roles = user.Roles,
                 UserID = user.Id,
                 XSRFToken = xsrfToken
             };
-            string token = CryptoUtils.CreateJWTToken(signingCredentials, claims.ToJWTClaimsIEnumerable(now), now, now.AddHours(1));
+            string token = CryptoUtils.CreateJWTToken(signingCredentials, claims.ToJWTClaims(now), now, now.AddHours(1));
             await savePubKeySharedTask;
             
             return token;

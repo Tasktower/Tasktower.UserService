@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
 using Tasktower.UserService.Domain;
-using Tasktower.UserService.Security;
+using Tasktower.UserService.Security.Auth;
 
 namespace Tasktower.UserService.Dtos
 {

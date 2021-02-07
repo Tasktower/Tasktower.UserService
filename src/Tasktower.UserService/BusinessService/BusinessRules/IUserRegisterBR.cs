@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tasktower.UserService.Dtos;
 
-namespace Tasktower.UserService.BusinessRules
+namespace Tasktower.UserService.BusinessService.BusinessRules
 {
     public interface IUserRegisterBR
     {

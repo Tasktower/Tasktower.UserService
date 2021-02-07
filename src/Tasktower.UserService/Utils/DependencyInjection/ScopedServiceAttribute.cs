@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Tasktower.UserService.Utils.DependencyInjection
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class BusinessServiceAttribute : Attribute
+    public class ScopedServiceAttribute : Attribute
     {
     }
 }

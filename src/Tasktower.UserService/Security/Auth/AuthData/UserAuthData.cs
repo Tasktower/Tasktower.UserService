@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 
-namespace Tasktower.UserService.Security.AuthData
+namespace Tasktower.UserService.Security.Auth.AuthData
 {
-    public class UserJWTClaims
+    public class UserAuthData
     {
         public Guid UserID { get; set; }
         public IEnumerable<Role> Roles {get; set;}
@@ -14,7 +14,7 @@ namespace Tasktower.UserService.Security.AuthData
 
         public string XSRFToken { get; set; }
 
-        public IEnumerable<Claim> ToJWTClaimsIEnumerable(DateTime issuedAt) 
+        public IEnumerable<Claim> ToJWTClaims(DateTime issuedAt) 
         {
             return new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(issuedAt).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
@@ -25,11 +25,9 @@ namespace Tasktower.UserService.Security.AuthData
             };
         }
 
-        public static bool TryParseFromJWT(string token, JwtSecurityTokenHandler handler, out UserJWTClaims claims)
+        public static bool TryParseFromJWTPayload(JwtPayload payload, out UserAuthData claims)
         {
             claims = null;
-            handler ??= new JwtSecurityTokenHandler();
-            var payload = handler.ReadJwtToken(token).Payload;
 
             if (!bool.TryParse(payload.GetValueOrDefault(nameof(EmailVerified)).ToString(), out bool emailVerified))
             {
@@ -53,7 +51,7 @@ namespace Tasktower.UserService.Security.AuthData
                     return role;
                 }).Where(r => r != Role.DEFAULT);
 
-            claims = new UserJWTClaims
+            claims = new UserAuthData
             {
                 EmailVerified = emailVerified,
                 Roles = roles,

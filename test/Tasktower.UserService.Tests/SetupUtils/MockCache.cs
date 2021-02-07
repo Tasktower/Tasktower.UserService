@@ -46,6 +46,14 @@ namespace Tasktower.UserService.Tests.SetupUtils
             return JsonSerializer.Deserialize<T>(data.Item1);
         }
 
+        public async Task<TimeSpan?> TimeUntilExpire(string id)
+        {
+            var task = Task.Delay(1);
+            (string, DateTime) data = _store.GetValueOrDefault(FullKey(id));
+            await task;
+            return data.Item2 - DateTime.Now;
+        }
+
         public async Task Set(string id, T value, TimeSpan? absoluteExpireTime = null)
         {
             var task = Task.Delay(1);

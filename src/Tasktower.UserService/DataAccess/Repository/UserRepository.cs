@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tasktower.UserService.Domain;
+using Tasktower.UserService.Security.Auth;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {
@@ -35,7 +36,7 @@ namespace Tasktower.UserService.DataAccess.Repository
             await task;
         }
 
-        public async Task UpdateRolesById(Guid id, Security.Role[] roles)
+        public async Task UpdateRolesById(Guid id, Role[] roles)
         {
             var task = Task.Delay(1);
             var user = await _dbContext.FindAsync(id);

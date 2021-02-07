@@ -39,6 +39,11 @@ namespace Tasktower.UserService.DataAccess.Cache
             return JsonSerializer.Deserialize<T>(jsonData);
         }
 
+        public async Task<TimeSpan?> TimeUntilExpire(string id)
+        {
+            return await _cacheDB.KeyTimeToLiveAsync(id);
+        }
+
         private async Task SetWithOptions(string id, T value, TimeSpan? absoluteExpireTime = null, When when = When.Always)
         {
             var jsonData = JsonSerializer.Serialize(value);
@@ -60,5 +65,6 @@ namespace Tasktower.UserService.DataAccess.Cache
         {
             await _cacheDB.KeyDeleteAsync(FullKey(id));
         }
+
     }
 }

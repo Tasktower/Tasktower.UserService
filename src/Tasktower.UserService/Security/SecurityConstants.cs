@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Tasktower.UserService.Security
 {
-    public class JWTIdentityConstants
+    public class SecurityConstants
     {
         public const string JwtAudience = "Tasktower Users";
         public const string JwtIssuer = "Tasktower";

@@ -67,8 +67,8 @@ namespace Tasktower.UserService.Security
             DateTime? expires = null)
         {
             var jwt = new JwtSecurityToken(
-                audience: JWTIdentityConstants.JwtAudience,
-                issuer: JWTIdentityConstants.JwtIssuer,
+                audience: SecurityConstants.JwtAudience,
+                issuer: SecurityConstants.JwtIssuer,
                 claims: claims,
                 notBefore: notBefore,
                 expires: expires,
@@ -80,15 +80,16 @@ namespace Tasktower.UserService.Security
             return token;
         }
 
-        public delegate bool ActionJwtParser<T>(string token, JwtSecurityTokenHandler handler, out T claims);
+        public delegate bool ActionJwtParser<T>(JwtPayload payload, out T claims);
 
-        public static bool TryParseAndValidateJWTToken<TClaims>(string token, SecurityKey key, out TClaims claims, 
+        public static bool TryParseAndValidateJWTToken<TClaims>(string token, SecurityKey key, JwtSecurityTokenHandler handler, out TClaims claims, 
             ActionJwtParser<TClaims> parser) 
             where TClaims : class
         {
-            var handler = new JwtSecurityTokenHandler();
+            claims = null;
+            handler ??= new JwtSecurityTokenHandler();
 
-            if(!parser.Invoke(token, handler, out claims))
+            if( !handler.CanReadToken(token) || !parser.Invoke(handler.ReadJwtToken(token).Payload, out claims))
             {
                 return false;
             }
@@ -99,14 +100,15 @@ namespace Tasktower.UserService.Security
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = JWTIdentityConstants.JwtIssuer,
-                ValidAudience = JWTIdentityConstants.JwtAudience,
-                IssuerSigningKey = key
+                ValidIssuer = SecurityConstants.JwtIssuer,
+                ValidAudience = SecurityConstants.JwtAudience,
+                IssuerSigningKey = key,
             };
 
             try
             {
-                handler.ValidateToken(token, validationParameters, out var validatedSecurityToken);
+                handler.ValidateToken(token, validationParameters, out SecurityToken validatedSecurityToken);
+                
             }
             catch
             {

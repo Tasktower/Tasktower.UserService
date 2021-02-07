@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tasktower.UserService.Domain;
-using Tasktower.UserService.Security;
+using Tasktower.UserService.Security.Auth;
 using Xunit;
 
 namespace Tasktower.UserService.Tests.Domain

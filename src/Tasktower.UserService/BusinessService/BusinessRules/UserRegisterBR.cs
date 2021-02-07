@@ -7,9 +7,9 @@ using Tasktower.UserService.Utils.DependencyInjection;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Errors;
 
-namespace Tasktower.UserService.BusinessRules
+namespace Tasktower.UserService.BusinessService.BusinessRules
 {
-    [BusinessRules]
+    [ScopedService]
     public class UserRegisterBR : IUserRegisterBR
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -11,6 +11,7 @@ using Tasktower.UserService.Domain;
 using Tasktower.UserService.Dtos;
 using Tasktower.UserService.Errors;
 using Tasktower.UserService.Security;
+using Tasktower.UserService.Security.Auth;
 using Tasktower.UserService.Tests.SetupUtils;
 using Xunit;
 

@@ -18,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Errors.ErrorHandling;
 using Tasktower.UserService.Utils.DependencyInjection;
+using Tasktower.UserService.Security.Auth.Middleware;
 
 namespace Tasktower.UserService
 {
@@ -43,11 +44,8 @@ namespace Tasktower.UserService
                 options.SharedCacheConnectionString = Configuration.GetConnectionString("redisSharedMemStoreConn");
             });
 
-            // Business rules
-            services.AddBusinessRules();
-
-            // Business services
-            services.AddBusinessServices();
+            // Custom scoped services
+            services.AddScopedServices();
 
             // Routing services
             services.AddCors();
@@ -56,6 +54,24 @@ namespace Tasktower.UserService
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tasktower.UserService", Version = "v1" });
+                c.AddSecurityDefinition("XSRF Token", new OpenApiSecurityScheme()
+                {
+                    In = ParameterLocation.Header,
+                    Name = "X-XSRF-TOKEN",
+                    Type = SecuritySchemeType.ApiKey,
+                });
+                c.AddSecurityDefinition("Access Token", new OpenApiSecurityScheme()
+                {
+                    In = ParameterLocation.Cookie,
+                    Name = "ACCESS-TOKEN", 
+                    Type = SecuritySchemeType.ApiKey,
+                });
+                c.AddSecurityDefinition("Refresh Token", new OpenApiSecurityScheme()
+                {
+                    In = ParameterLocation.Cookie,
+                    Name = "REFRESH-TOKEN",
+                    Type = SecuritySchemeType.ApiKey,
+                });
             });
         }
 
@@ -68,7 +84,10 @@ namespace Tasktower.UserService
             {
                 // app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tasktower.UserService v1"));
+                app.UseSwaggerUI(c => 
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tasktower.UserService v1");
+                });
             }
             app.UseCustonErrorHandler(new ErrorHandleMiddlewareOptions { 
                 ShowAllErrorMessages = env.IsDevelopment(), 
@@ -79,7 +98,21 @@ namespace Tasktower.UserService
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseJWTMiddleware<IUnitOfWork>(options =>
+            {
+                options.KeyRetrieverAsync = async (kid, unitOfWork) =>
+                {
+                    string pem = await unitOfWork.AuthRSAPemPubKeyLocalCache.Get(kid);
+                    if (string.IsNullOrEmpty(pem))
+                    {
+                        var getPemTask = unitOfWork.AuthRSAPemPubKeySharedCache.Get(kid);
+                        var getExprTask = unitOfWork.AuthRSAPemPubKeySharedCache.TimeUntilExpire(kid);
+                        pem = await getPemTask;
+                        await unitOfWork.AuthRSAPemPubKeyLocalCache.Set(kid, pem, absoluteExpireTime: await getExprTask);
+                    }
+                    return pem;
+                };
+            });
 
             app.UseEndpoints(endpoints =>
             {

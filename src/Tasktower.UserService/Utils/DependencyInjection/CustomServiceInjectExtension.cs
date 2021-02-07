@@ -9,21 +9,10 @@ namespace Tasktower.UserService.Utils.DependencyInjection
 {
     public static class CustomServiceInjectExtension
     {
-        public static IServiceCollection AddBusinessServices(this IServiceCollection services)
+        public static IServiceCollection AddScopedServices(this IServiceCollection services)
         {
             var types = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.GetCustomAttribute<BusinessServiceAttribute>() is not null);
-            foreach (Type t in types)
-            {
-                services.AddScoped(t.GetInterface($"I{t.Name}"), t);
-            }
-            return services;
-        }
-
-        public static IServiceCollection AddBusinessRules(this IServiceCollection services)
-        {
-            var types = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.GetCustomAttribute<BusinessRulesAttribute>() is not null);
+                .Where(t => t.GetCustomAttribute<ScopedServiceAttribute>() is not null);
             foreach (Type t in types)
             {
                 services.AddScoped(t.GetInterface($"I{t.Name}"), t);

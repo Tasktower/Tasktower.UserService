@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tasktower.UserService.DataAccess;
-using Tasktower.UserService.BusinessRules;
 using Tasktower.UserService.Tests.SetupUtils;
 using Xunit;
 using Tasktower.UserService.Errors;
+using Tasktower.UserService.BusinessService.BusinessRules;
 
 namespace Tasktower.UserService.Tests.BusinessRules
 {

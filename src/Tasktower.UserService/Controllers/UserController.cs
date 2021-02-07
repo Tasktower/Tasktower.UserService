@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Tasktower.UserService.Dtos;
 using Tasktower.UserService.BusinessService;
 using Microsoft.AspNetCore.Http;
+using Tasktower.UserService.Security.Auth;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,7 +26,17 @@ namespace Tasktower.UserService.Controllers
         [HttpGet("/{id}")]
         public async Task<UserReadDto> GetUserById(Guid id)
         {
-            return await _userAccountService.GetUserByID(id);
+            var userData = new AuthContext(HttpContext).UserAuthData;
+            return await _userAccountService.GetUserByID(id, userData == null || !userData.UserID.Equals(id));
+        }
+
+        // GET api/<UserController>/userinfo
+        [Authorize]
+        [HttpGet("/userinfo")]
+        public async Task<ActionResult<UserReadDto>> GetCurrentUserInfo()
+        {
+            var userData = new AuthContext(HttpContext).UserAuthData;
+            return await _userAccountService.GetUserByID(userData.UserID, false);
         }
 
         // POST api/<UserController>/register
