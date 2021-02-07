@@ -44,8 +44,9 @@ namespace Tasktower.UserService.Security.Auth.Middleware
 
 
                 using RSACryptoServiceProvider rsa = CryptoUtils.RSAFromPublicPem(pem);
-                
+
                 var rsaSecurityKey = new RsaSecurityKey(rsa) { KeyId = kid };
+
 
                 if (!CryptoUtils.TryParseAndValidateJWTToken(token, rsaSecurityKey, handler, out UserAuthData userData,
                     UserAuthData.TryParseFromJWTPayload))
