@@ -20,15 +20,13 @@ namespace Tasktower.UserService.Tests.BusinessService
     {
         private IUnitOfWork _unitOfWork;
         private IUserAccountService _userService;
-        private ICryptoService _cryptoService;
 
         public UserServiceTest()
         {
             _unitOfWork = new MockUnitOfWork(GetType().FullName ?? GetType().Name);
             var logger = new NullLogger<UserAccountService>();
             var userRegisterBR = new UserRegisterBR(_unitOfWork);
-            _cryptoService = new CryptoService();
-            _userService = new UserAccountService(_unitOfWork, userRegisterBR, _cryptoService, logger);
+            _userService = new UserAccountService(_unitOfWork, userRegisterBR, logger);
             
             InsertTestData().Wait();
         }
@@ -37,7 +35,7 @@ namespace Tasktower.UserService.Tests.BusinessService
         {
             var t1 = _unitOfWork.UserRepo.Add(new User
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.Parse("de0b60db-bd92-4b79-b8fe-ab89837068b2"),
                 Name = "Gordon Ramswey",
                 Email = "gordon@email.com",
                 EmailVerified = true,
@@ -46,7 +44,7 @@ namespace Tasktower.UserService.Tests.BusinessService
             });
             var t2 = _unitOfWork.UserRepo.Add(new UserService.Domain.User
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.Parse("8e96c807-a3a1-4162-9177-fffd9a60d0da "),
                 Name = "Guy Fieri",
                 Email = "guy@email.com",
                 EmailVerified = true,
@@ -63,7 +61,6 @@ namespace Tasktower.UserService.Tests.BusinessService
             _unitOfWork.SaveChanges();
             _unitOfWork.Dispose();
             _unitOfWork = null;
-            _cryptoService = null;
             _userService = null;
         }
 
@@ -80,7 +77,7 @@ namespace Tasktower.UserService.Tests.BusinessService
             User createdUser = await _unitOfWork.UserRepo.GetByEmail(dto.Email);
             Assert.Equal(dto.Name, createdUser.Name);
             Assert.Equal(dto.Email, createdUser.Email);
-            Assert.True(_cryptoService.VerifyPasswordHash(dto.Password, createdUser.PasswordHash, createdUser.PasswordSalt));
+            Assert.True(CryptoUtils.VerifyPassword(dto.Password, createdUser.PasswordHash, createdUser.PasswordSalt));
             Assert.Equal(new Role[] { Role.STANDARD }, createdUser.Roles);
         }
 
@@ -102,6 +99,45 @@ namespace Tasktower.UserService.Tests.BusinessService
             Assert.Equal(APIException.Code.MULTIPLE_EXCEPTIONS_FOUND, apiEx.ErrorCode);
             Assert.Single(apiEx.MultipleErrors);
             Assert.Contains(apiEx.MultipleErrors, e => e.ErrorCode == APIException.Code.ACCOUNT_ALREADY_EXISTS);
+        }
+
+        [Fact]
+        public async Task GetUserByID_GordonRamsayQueriedWithSensitiveInfo_WhenGordonRamsayIDPassedAndIgnoreSensitiveFalse()
+        {
+            User gordonRamsayUser = await _unitOfWork.UserRepo.GetById(Guid.Parse("de0b60db-bd92-4b79-b8fe-ab89837068b2"));
+            UserReadDto userReadDto = await _userService.GetUserByID(gordonRamsayUser.Id, ignoreSensitive: false);
+            Assert.Equal(gordonRamsayUser.Id, userReadDto.Id);
+            Assert.Equal(gordonRamsayUser.Email, userReadDto.Email);
+            Assert.Equal(gordonRamsayUser.EmailVerified, userReadDto.EmailVerified);
+            Assert.Equal(gordonRamsayUser.Roles, userReadDto.Roles);
+            Assert.Equal(gordonRamsayUser.CreatedAt, userReadDto.CreatedAt);
+            Assert.Equal(gordonRamsayUser.UpdatedAt, userReadDto.UpdatedAt);
+        }
+
+        [Fact]
+        public async Task GetUserByID_GordonRamsayQueriedWithSensitiveInfo_WhenGordonRamsayIDPassedAndIgnoreSensitiveTrue()
+        {
+            User gordonRamsayUser = await _unitOfWork.UserRepo.GetById(Guid.Parse("de0b60db-bd92-4b79-b8fe-ab89837068b2"));
+            UserReadDto userReadDto = await _userService.GetUserByID(gordonRamsayUser.Id, ignoreSensitive: true);
+            Assert.Equal(gordonRamsayUser.Id, userReadDto.Id);
+            Assert.Equal(gordonRamsayUser.Email, userReadDto.Email);
+            Assert.Null(userReadDto.EmailVerified);
+            Assert.Null( userReadDto.Roles);
+            Assert.Null(userReadDto.CreatedAt);
+            Assert.Null(userReadDto.UpdatedAt);
+        }
+
+        [Fact]
+        public async Task GetUserByID_Fail_WhenWrongIDPassed()
+        {
+            await _unitOfWork.UserRepo.RemoveRange(_unitOfWork.UserRepo.GetAll().Result);
+
+            var exception = await Assert.ThrowsAsync<APIException>(async () => 
+            { 
+                await _userService.GetUserByID(Guid.Parse("3777b2ec-f40c-4905-831d-5b4c49be9c28")); 
+            });
+
+            Assert.Equal(APIException.Code.ACCOUNT_NOT_FOUND, exception.ErrorCode);
         }
     }
 }

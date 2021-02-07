@@ -10,6 +10,11 @@ using Tasktower.UserService.Domain;
 using Microsoft.Extensions.Logging;
 using Tasktower.UserService.Errors;
 using Mapster;
+using Tasktower.UserService.Security.AuthData;
+using Tasktower.UserService.Domain.CacheOnly;
+using Tasktower.UserService.Security;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Tasktower.UserService.BusinessService
 {
@@ -19,16 +24,13 @@ namespace Tasktower.UserService.BusinessService
         private readonly ILogger<UserAccountService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRegisterBR _userRegisterBR;
-        private readonly ICryptoService _cryptoService;
         public UserAccountService(
             IUnitOfWork unitOfWork, 
             IUserRegisterBR userRegisterBR,
-            ICryptoService cryptoService,
             ILogger<UserAccountService> logger)
         {
             _unitOfWork = unitOfWork;
             _userRegisterBR = userRegisterBR;
-            _cryptoService = cryptoService;
             _logger = logger;
         }
 
@@ -46,24 +48,71 @@ namespace Tasktower.UserService.BusinessService
         {
             var user = await _unitOfWork.UserRepo.GetByEmail(userStandardSignInDto.Email);
             if (user == null || user.PasswordHash == null || user.PasswordSalt == null || 
-                !_cryptoService.VerifyPasswordHash(userStandardSignInDto.Password, user.PasswordHash, user.PasswordSalt))
+                !CryptoUtils.VerifyPassword(userStandardSignInDto.Password, user.PasswordHash, user.PasswordSalt))
             {
                 throw APIException.Create(APIException.Code.ACCOUNT_NOT_FOUND);
             }
+
+            Task<string> createResreshTokenTask = CreateSaveRefreshToken(user);
+
+            string xsrfToken = Convert.ToBase64String(CryptoUtils.GenerateRandomBytes(32));
+            Task<string> createAccessTokenTask = CreateAccessToken(user, xsrfToken);
+
             return new AuthTokensDto
             {
-                RefreshToken = "dummyRefresh",
-                AccessToken = "dummyAccess",
-                XSRFToken = "dummyXSRF"
+                RefreshToken = await createResreshTokenTask,
+                AccessToken = await createAccessTokenTask,
+                XSRFToken = xsrfToken
             };
+        }
+
+        private async Task<string> CreateSaveRefreshToken(User user)
+        {
+            byte[] refreshTokenBytes = CryptoUtils.GenerateRandomBytes(64);
+            byte[] refreshTokenSaltBytes = CryptoUtils.GenerateRandomBytes(8);
+            await _unitOfWork.RefreshTokenHashLocalCache.SetIfNotExists(
+                Convert.ToBase64String(CryptoUtils.CreateSHA256Hash(refreshTokenBytes, refreshTokenSaltBytes)),
+                new RefreshTokenData { RefreshTokenSaltBase64 = Convert.ToBase64String(refreshTokenSaltBytes), UserID = user.Id },
+                TimeSpan.FromDays(4));
+            return Convert.ToBase64String(refreshTokenBytes);
+        }
+
+        private async Task<string> CreateAccessToken(User user, string xsrfToken)
+        {
+            DateTime now = DateTime.Now;
+            var kid = Guid.NewGuid().ToString();
+            using RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(4096);
+            Task savePubKeySharedTask = _unitOfWork.AuthRSAPemPubKeySharedCache.SetIfNotExists(kid, CryptoUtils.CreateRSAPublicPem(rsa));
+
+            var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa) { KeyId = kid },
+                SecurityAlgorithms.RsaSha256)
+            {
+                CryptoProviderFactory = new CryptoProviderFactory
+                {
+                    CacheSignatureProviders = false,
+                },
+            };
+
+            UserJWTClaims claims = new UserJWTClaims
+            {
+                EmailVerified = user.EmailVerified,
+                Roles = user.Roles,
+                UserID = user.Id,
+                XSRFToken = xsrfToken
+            };
+            string token = CryptoUtils.CreateJWTToken(signingCredentials, claims.ToJWTClaimsIEnumerable(now), now, now.AddHours(1));
+            await savePubKeySharedTask;
+            
+            return token;
+            
         }
 
         public async Task<UserReadDto> RegisterUser(UserRegisterDto userRegisterDto, 
             bool emailVerified=false, bool ignoreSensitive = true)
         {
             await _userRegisterBR.Validate(userRegisterDto);
-            var passwordSalt = _cryptoService.GeneratePasswordSalt();
-            var passwordHash = _cryptoService.PasswordHash(userRegisterDto.Password, passwordSalt);
+            var passwordSalt = CryptoUtils.GenerateRandomBytes(size: 32);
+            var passwordHash = CryptoUtils.CreatePasswordHash(userRegisterDto.Password, passwordSalt);
             var user = new User
             {
                 Name = userRegisterDto.Name,

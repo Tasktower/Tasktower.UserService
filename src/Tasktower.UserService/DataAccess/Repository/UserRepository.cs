@@ -18,7 +18,7 @@ namespace Tasktower.UserService.DataAccess.Repository
 
         public async Task<User> GetByEmail(string email)
         {
-            return await _dbContext.Where(u => u.Email == email).FirstAsync();
+            return await _dbContext.Where(u => u.Email == email).FirstOrDefaultAsync();
         }
 
         public async Task UpdatePasswordSaltAndPasswordHashByID(Guid id, byte[] passwordHash, byte[] passwordSalt)

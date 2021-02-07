@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tasktower.UserService.DataAccess.Cache;
 using Tasktower.UserService.DataAccess.Repository;
+using Tasktower.UserService.Domain.CacheOnly;
 
 namespace Tasktower.UserService.DataAccess
 {
@@ -11,6 +12,7 @@ namespace Tasktower.UserService.DataAccess
     {
         IUserRepository UserRepo { get; }
 
+        ICache<RefreshTokenData> RefreshTokenHashLocalCache => NewCache<RefreshTokenData>(CacheTag.REFRESH_TOKEN_HASH);
         /// <summary>
         /// Caches RSA public key for jwt verification
         /// </summary>

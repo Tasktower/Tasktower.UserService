@@ -22,7 +22,7 @@ namespace Tasktower.UserService.DataAccess.Cache
         public Cache(IDatabase cacheDB, CacheTag tag)
         {
             Type type = typeof(T);
-            var typename = type.FullName ?? type.Name;
+            var typename = type.Name;
             var prefix = $"{_storageName}:{typename}:{tag}";
             _cacheDB = cacheDB;
             _prefix = prefix;

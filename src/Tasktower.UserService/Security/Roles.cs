@@ -9,7 +9,7 @@ namespace Tasktower.UserService.Security
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Role
     {
-        SUPERUSER, ADMINISTRATOR, STANDARD
+        DEFAULT=0, SUPERUSER, ADMINISTRATOR, STANDARD
     }
 
     public static class RoleGroups 
