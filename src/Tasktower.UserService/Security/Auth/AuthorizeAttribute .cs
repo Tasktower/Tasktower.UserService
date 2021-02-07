@@ -33,7 +33,7 @@ namespace Tasktower.UserService.Security.Auth
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
                 return;
             }
-            if((_emailVerifyRequired && !userData.EmailVerified) || !userData.Roles.Any(r => _roles.Contains(r)))
+            if((_emailVerifyRequired && !userData.EmailVerified) || (_roles.Count > 0 && !userData.Roles.Any(r => _roles.Contains(r))))
             {
                 context.Result = new JsonResult(new { message = "Forbidden" }) { StatusCode = StatusCodes.Status403Forbidden };
             }         

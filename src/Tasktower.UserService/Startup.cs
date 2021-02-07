@@ -72,6 +72,12 @@ namespace Tasktower.UserService
                     Name = "REFRESH-TOKEN",
                     Type = SecuritySchemeType.ApiKey,
                 });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {new OpenApiSecurityScheme{Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "XSRF Token"}}, Array.Empty<string>()},
+                    {new OpenApiSecurityScheme{Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "Access Token"}}, Array.Empty<string>()},
+                    {new OpenApiSecurityScheme{Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "Refresh Token"}}, Array.Empty<string>()},
+                });
             });
         }
 
