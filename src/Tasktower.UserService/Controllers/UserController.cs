@@ -28,8 +28,9 @@ namespace Tasktower.UserService.Controllers
         {
             var userData = new AuthContext(HttpContext).UserAuthData;
             var adminRoles = RoleGroups.AdminRoles();
-            bool notAdmin = !userData.Roles.Any(r => adminRoles.Contains(r));
-            return await _userAccountService.GetUserByID(id, userData == null || (notAdmin && !userData.UserID.Equals(id)));
+            bool ignoreSensitive = userData == null || 
+                !( userData.Roles.Any(r => adminRoles.Contains(r)) || userData.UserID.Equals(id));
+            return await _userAccountService.GetUserByID(id, ignoreSensitive);
         }
 
         // GET api/<UserController>/userinfo
