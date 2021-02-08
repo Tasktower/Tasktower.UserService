@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Dtos;
-using Tasktower.UserService.Utils.DependencyInjection;
+using Tasktower.Webutils.DependencyInjection;
 using Tasktower.UserService.Domain;
 using Microsoft.Extensions.Logging;
 using Tasktower.Webutils.Security.Auth.AuthData;
