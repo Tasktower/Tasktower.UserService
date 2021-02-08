@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tasktower.UserService.BusinessRules;
+using Tasktower.UserService.BusinessService.BusinessRules;
 using Tasktower.UserService.BusinessService;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Domain;
