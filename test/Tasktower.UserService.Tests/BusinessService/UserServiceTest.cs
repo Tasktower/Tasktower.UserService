@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tasktower.Webutils.Security;
+using Tasktower.Webutils.Security.Auth;
 using Tasktower.UserService.BusinessService.BusinessRules;
 using Tasktower.UserService.BusinessService;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Domain;
 using Tasktower.UserService.Dtos;
 using Tasktower.UserService.Errors;
-using Tasktower.UserService.Security;
-using Tasktower.UserService.Security.Auth;
 using Tasktower.UserService.Tests.SetupUtils;
 using Xunit;
 

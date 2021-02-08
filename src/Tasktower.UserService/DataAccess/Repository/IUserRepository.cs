@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Tasktower.Webutils.Security.Auth;
 using Tasktower.UserService.Domain;
-using Tasktower.UserService.Security.Auth;
 
 namespace Tasktower.UserService.DataAccess.Repository
 {

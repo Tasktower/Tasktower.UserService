@@ -15,10 +15,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Tasktower.Webutils.Security.Auth.Middleware;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Errors.ErrorHandling;
 using Tasktower.UserService.Utils.DependencyInjection;
-using Tasktower.UserService.Security.Auth.Middleware;
 
 namespace Tasktower.UserService
 {
