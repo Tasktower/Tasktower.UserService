@@ -14,14 +14,15 @@ namespace Tasktower.UserService.Security.Auth
         private readonly ISet<Role> _roles;
         private readonly bool _emailVerifyRequired;
 
-        public AuthorizeAttribute(params Role[] roles)
+        public AuthorizeAttribute(params Permissions[] permissions)
         {
-            _roles = new HashSet<Role>(roles);
+            
+            _roles = permissions.SelectMany(p => PermissionUtils.GetPermissionRoles(p)).ToHashSet();
             _emailVerifyRequired = false;
         }
-        public AuthorizeAttribute(bool emailVerifyRequired, params Role[] roles)
+        public AuthorizeAttribute(bool emailVerifyRequired, Permissions[] permissions)
         {
-            _roles = new HashSet<Role>(roles);
+            _roles = permissions.SelectMany(p => PermissionUtils.GetPermissionRoles(p)).ToHashSet();
             _emailVerifyRequired = emailVerifyRequired;
         }
         public void OnAuthorization(AuthorizationFilterContext context)

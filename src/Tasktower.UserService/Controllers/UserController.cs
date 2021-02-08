@@ -27,7 +27,7 @@ namespace Tasktower.UserService.Controllers
         public async Task<UserReadDto> GetUserById(Guid id)
         {
             var userData = new AuthContext(HttpContext).UserAuthData;
-            var adminRoles = RoleGroups.AdminRoles();
+            var adminRoles = PermissionUtils.GetPermissionRoles(Permissions.READ_USER_SENSITVE);
             bool ignoreSensitive = userData == null || 
                 !( userData.Roles.Any(r => adminRoles.Contains(r)) || userData.UserID.Equals(id));
             return await _userAccountService.GetUserByID(id, ignoreSensitive);
