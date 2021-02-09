@@ -18,7 +18,7 @@ using Microsoft.OpenApi.Models;
 using Tasktower.Webtools.Security.Auth.Middleware;
 using Tasktower.Webtools.DependencyInjection;
 using Tasktower.UserService.DataAccess;
-using Tasktower.UserService.Errors.ErrorHandling;
+using Tasktower.Webtools.Errors.Middleware;
 
 
 namespace Tasktower.UserService

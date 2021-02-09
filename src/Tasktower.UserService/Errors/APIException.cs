@@ -4,10 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Tasktower.Webtools.Errors;
 
 namespace Tasktower.UserService.Errors
 {
-    public class APIException : Exception
+    public class APIException : WebAppException
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum Code
@@ -50,11 +51,5 @@ namespace Tasktower.UserService.Errors
             ErrorCode = code.ToString();
             StatusCode = statusCode;
         }
-
-        public IEnumerable<APIException> MultipleErrors { get; internal set; } = null; 
-
-        public HttpStatusCode StatusCode { get; internal set; }
-
-        public string ErrorCode { get; internal set; }
     }
 }
