@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Tasktower.Webutils\Tasktower.Webutils\Tasktower.Webutils.csproj" />
+    <ProjectReference Include="..\..\..\Tasktower.Webtools\Tasktower.Webtools\Tasktower.Webtools.csproj" />
   </ItemGroup>
 
 </Project>

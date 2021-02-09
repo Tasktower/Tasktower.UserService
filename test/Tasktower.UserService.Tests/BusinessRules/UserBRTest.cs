@@ -65,9 +65,9 @@ namespace Tasktower.UserService.Tests.BusinessRules
                     Email = "gordon@email.com"
                 }); 
             });
-            Assert.Equal(APIException.Code.MULTIPLE_EXCEPTIONS_FOUND, apiEx.ErrorCode);
+            Assert.Equal(APIException.Code.MULTIPLE_EXCEPTIONS_FOUND.ToString(), apiEx.ErrorCode);
             Assert.Single(apiEx.MultipleErrors);
-            Assert.Contains(apiEx.MultipleErrors, e => e.ErrorCode == APIException.Code.ACCOUNT_ALREADY_EXISTS);
+            Assert.Contains(apiEx.MultipleErrors, e => e.ErrorCode == APIException.Code.ACCOUNT_ALREADY_EXISTS.ToString());
         }
 
         [Fact]

@@ -15,8 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Tasktower.Webutils.Security.Auth.Middleware;
-using Tasktower.Webutils.DependencyInjection;
+using Tasktower.Webtools.Security.Auth.Middleware;
+using Tasktower.Webtools.DependencyInjection;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Errors.ErrorHandling;
 

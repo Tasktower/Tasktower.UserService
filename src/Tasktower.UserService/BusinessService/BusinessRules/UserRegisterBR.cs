@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tasktower.UserService.Dtos;
-using Tasktower.Webutils.DependencyInjection;
+using Tasktower.Webtools.DependencyInjection;
 using Tasktower.UserService.DataAccess;
 using Tasktower.UserService.Errors;
 

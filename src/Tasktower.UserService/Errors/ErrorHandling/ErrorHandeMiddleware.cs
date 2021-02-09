@@ -6,10 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Tasktower.Webtools.JsonTools;
 
 namespace Tasktower.UserService.Errors.ErrorHandling
 {
-    class ErrorHandeMiddleware
+    public class ErrorHandeMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ErrorHandleMiddlewareOptions _options;
@@ -38,7 +39,7 @@ namespace Tasktower.UserService.Errors.ErrorHandling
 
         private Task HandleException(HttpContext context, Exception ex)
         {
-            APIException.Code? errorCode = null;
+            string errorCode = null;
             string message;
             HttpStatusCode statusCode = HttpStatusCode.InternalServerError; // 500 if unexpected
             IEnumerable<object> multipleErrors = null;
@@ -59,7 +60,7 @@ namespace Tasktower.UserService.Errors.ErrorHandling
                 stackTrace = _options.UseStackTrace?
                     ex.StackTrace.Split(Environment.NewLine).Select(x => x.Trim()): null,
                 errorCode, multipleErrors, status = statusCode
-            }, Utils.JsonSerializerUtils.CustomSerializerOptions());;
+            }, JsonSerializerUtils.CustomSerializerOptions());;
 
             if (_options.UseStackTrace)
             {

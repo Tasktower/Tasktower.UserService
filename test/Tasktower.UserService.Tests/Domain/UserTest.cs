@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tasktower.Webutils.Security.Auth;
+using Tasktower.Webtools.Security.Auth;
 using Tasktower.UserService.Domain;
 using Xunit;
 

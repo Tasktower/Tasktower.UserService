@@ -47,7 +47,7 @@ namespace Tasktower.UserService.Errors
         private APIException(Code code, HttpStatusCode statusCode, string messageFormat, params string[] args) 
             : base(string.Format(messageFormat, args))
         {
-            ErrorCode = code;
+            ErrorCode = code.ToString();
             StatusCode = statusCode;
         }
 
@@ -55,6 +55,6 @@ namespace Tasktower.UserService.Errors
 
         public HttpStatusCode StatusCode { get; internal set; }
 
-        public Code ErrorCode { get; internal set; }
+        public string ErrorCode { get; internal set; }
     }
 }

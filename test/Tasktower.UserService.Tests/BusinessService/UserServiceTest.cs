@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tasktower.Webutils.Security;
-using Tasktower.Webutils.Security.Auth;
+using Tasktower.Webtools.Security;
+using Tasktower.Webtools.Security.Auth;
 using Tasktower.UserService.BusinessService.BusinessRules;
 using Tasktower.UserService.BusinessService;
 using Tasktower.UserService.DataAccess;
@@ -97,9 +97,9 @@ namespace Tasktower.UserService.Tests.BusinessService
                 await _userService.RegisterUser(dto);
             });
 
-            Assert.Equal(APIException.Code.MULTIPLE_EXCEPTIONS_FOUND, apiEx.ErrorCode);
+            Assert.Equal(APIException.Code.MULTIPLE_EXCEPTIONS_FOUND.ToString(), apiEx.ErrorCode);
             Assert.Single(apiEx.MultipleErrors);
-            Assert.Contains(apiEx.MultipleErrors, e => e.ErrorCode == APIException.Code.ACCOUNT_ALREADY_EXISTS);
+            Assert.Contains(apiEx.MultipleErrors, e => e.ErrorCode == APIException.Code.ACCOUNT_ALREADY_EXISTS.ToString());
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace Tasktower.UserService.Tests.BusinessService
                 await _userService.GetUserByID(Guid.Parse("3777b2ec-f40c-4905-831d-5b4c49be9c28")); 
             });
 
-            Assert.Equal(APIException.Code.ACCOUNT_NOT_FOUND, exception.ErrorCode);
+            Assert.Equal(APIException.Code.ACCOUNT_NOT_FOUND.ToString(), exception.ErrorCode);
         }
     }
 }
