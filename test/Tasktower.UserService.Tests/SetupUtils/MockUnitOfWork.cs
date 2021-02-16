@@ -17,7 +17,7 @@ namespace Tasktower.UserService.Tests.SetupUtils
         private Dictionary<string, (string, DateTime)> _sharedCacheStore;
         private EntityFrameworkDBContext _efDbContext;
 
-        public IUserRepository UserRepo { get; private set; }
+        public IUserProfileRepository UserProfileRepo { get; private set; }
 
         public ICache<T> NewLocalCache<T>(CacheTag tag)
         {
@@ -36,7 +36,7 @@ namespace Tasktower.UserService.Tests.SetupUtils
             var optionsBuilder = new DbContextOptionsBuilder<EntityFrameworkDBContext>();
             optionsBuilder.UseInMemoryDatabase(dbname);
             _efDbContext = new EntityFrameworkDBContext(optionsBuilder.Options);
-            UserRepo = new UserRepository(_efDbContext.UserItems);
+            UserProfileRepo = new UserProfileRepository(_efDbContext.UserItems);
         }
 
         public void SaveChanges()

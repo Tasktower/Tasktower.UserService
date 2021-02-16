@@ -9,9 +9,6 @@ namespace Tasktower.UserService.Domain
 {
     public abstract class AbstractDomain
     {
-        [Key]
-        [Column("id")]
-        public Guid Id { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
         [Column("updated_at")]

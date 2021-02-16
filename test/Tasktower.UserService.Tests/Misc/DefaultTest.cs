@@ -13,7 +13,7 @@ namespace Tasktower.UserService.Tests.Misc
     {
         [Fact]
         public void DefaultUser_null_fromUserType() {
-            User user = default(User);
+            UserProfile user = default(UserProfile);
             Assert.Null(user);
         }
 

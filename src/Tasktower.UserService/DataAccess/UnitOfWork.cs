@@ -13,7 +13,7 @@ namespace Tasktower.UserService.DataAccess
         private IConnectionMultiplexer _localCacheMuxer;
         private IConnectionMultiplexer _sharedCacheMuxer;
 
-        public IUserRepository UserRepo { get; private set; }
+        public IUserProfileRepository UserProfileRepo { get; private set; }
 
         public ICache<T> NewCache<T>(CacheTag tag, bool shared=false)
         {
@@ -26,7 +26,7 @@ namespace Tasktower.UserService.DataAccess
             _efDbContext = new EntityFrameworkDBContext(options.Value.DBContextOptions);
             _localCacheMuxer = ConnectionMultiplexer.Connect(options.Value.LocalCacheConnectionString);
             _sharedCacheMuxer = ConnectionMultiplexer.Connect(options.Value.SharedCacheConnectionString);
-            UserRepo = new UserRepository(_efDbContext.UserItems);
+            UserProfileRepo = new UserProfileRepository(_efDbContext.UserItems);
         }
 
         public void SaveChanges()

@@ -15,11 +15,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Tasktower.Webtools.Security.Auth.Middleware;
 using Tasktower.Webtools.DependencyInjection;
 using Tasktower.UserService.DataAccess;
 using Tasktower.Webtools.Errors.Middleware;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Tasktower.UserService
 {
@@ -45,6 +44,22 @@ namespace Tasktower.UserService
                 options.SharedCacheConnectionString = Configuration.GetConnectionString("redisSharedMemStoreConn");
             });
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.Authority = Configuration["Jwt:Authority"];
+                o.Audience = Configuration["Jwt:Audience"];
+                o.IncludeErrorDetails = true;
+            });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administrator", policy => policy.RequireClaim("user_roles", "[Administrator]"));
+            });
+
             // Custom scoped services
             services.AddScopedServices();
 
@@ -55,30 +70,6 @@ namespace Tasktower.UserService
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tasktower.UserService", Version = "v1" });
-                c.AddSecurityDefinition("XSRF Token", new OpenApiSecurityScheme()
-                {
-                    In = ParameterLocation.Header,
-                    Name = "X-XSRF-TOKEN",
-                    Type = SecuritySchemeType.ApiKey,
-                });
-                c.AddSecurityDefinition("Access Token", new OpenApiSecurityScheme()
-                {
-                    In = ParameterLocation.Cookie,
-                    Name = "ACCESS-TOKEN", 
-                    Type = SecuritySchemeType.ApiKey,
-                });
-                c.AddSecurityDefinition("Refresh Token", new OpenApiSecurityScheme()
-                {
-                    In = ParameterLocation.Cookie,
-                    Name = "REFRESH-TOKEN",
-                    Type = SecuritySchemeType.ApiKey,
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {new OpenApiSecurityScheme{Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "XSRF Token"}}, Array.Empty<string>()},
-                    {new OpenApiSecurityScheme{Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "Access Token"}}, Array.Empty<string>()},
-                    {new OpenApiSecurityScheme{Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "Refresh Token"}}, Array.Empty<string>()},
-                });
             });
         }
 
@@ -105,21 +96,8 @@ namespace Tasktower.UserService
 
             app.UseRouting();
 
-            app.UseJWTMiddleware<IUnitOfWork>(options =>
-            {
-                options.KeyRetrieverAsync = async (kid, unitOfWork) =>
-                {
-                    string pem = await unitOfWork.AuthRSAPemPubKeyLocalCache.Get(kid);
-                    if (string.IsNullOrEmpty(pem))
-                    {
-                        var getPemTask = unitOfWork.AuthRSAPemPubKeySharedCache.Get(kid);
-                        var getExprTask = unitOfWork.AuthRSAPemPubKeySharedCache.TimeUntilExpire(kid);
-                        pem = await getPemTask;
-                        await unitOfWork.AuthRSAPemPubKeyLocalCache.Set(kid, pem, absoluteExpireTime: await getExprTask);
-                    }
-                    return pem;
-                };
-            });
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
