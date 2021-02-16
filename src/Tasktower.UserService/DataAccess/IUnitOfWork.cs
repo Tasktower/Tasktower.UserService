@@ -10,7 +10,7 @@ namespace Tasktower.UserService.DataAccess
 {
     public interface IUnitOfWork : IDisposable
     {
-        IUserRepository UserRepo { get; }
+        IUserProfileRepository UserProfileRepo { get; }
 
         ICache<RefreshTokenData> RefreshTokenHashLocalCache => NewCache<RefreshTokenData>(CacheTag.REFRESH_TOKEN_HASH);
         /// <summary>
@@ -18,7 +18,7 @@ namespace Tasktower.UserService.DataAccess
         /// </summary>
         ICache<string> AuthRSAPemPubKeyLocalCache => NewCache<string>(CacheTag.AUTH_RSAPEM_PUBKEY);
         ICache<string> AuthRSAPemPubKeySharedCache => NewCache<string>(CacheTag.AUTH_RSAPEM_PUBKEY, shared: true);
-        ICache<Domain.User> UserLocalCache => NewCache<Domain.User>(CacheTag.USER);
+        ICache<Domain.UserProfile> UserLocalCache => NewCache<Domain.UserProfile>(CacheTag.USER);
         /// <summary>
         /// This creates a new cache with a given tag and type. 
         /// This is only meant to and so should not be called by any caller

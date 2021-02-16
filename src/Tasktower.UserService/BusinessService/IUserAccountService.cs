@@ -9,10 +9,6 @@ namespace Tasktower.UserService.BusinessService
 {
     public interface IUserAccountService
     {
-        Task<UserReadDto> RegisterUser(UserRegisterDto userRegisterDto, bool emailVerified = false, bool ignoreSensitive = true);
-        Task<UserReadDto> GetUserByID(Guid id, bool ignoreSensitive = true);
-
-        Task<AuthTokensDto> SignInStandard(UserStandardSignInDto userStandardSignInDto);
-
+        Task<UserProfileDto> GetUserByID(Guid id, bool ignoreSensitive = true);
     }
 }

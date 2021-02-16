@@ -12,7 +12,7 @@ namespace Tasktower.UserService.DataAccess.DBAccessor
         public EntityFrameworkDBContext(DbContextOptions<EntityFrameworkDBContext> options) : base(options)
         {
         }
-        public DbSet<User> UserItems { get; set; }
+        public DbSet<UserProfile> UserItems { get; set; }
 
     }
 }
